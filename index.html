@@ -122,8 +122,35 @@
         </div>
         <ul class="food-list" id="list-snacks"></ul>
       </div>
+
+      <!-- Custom meals injected here by JS -->
+      <div id="custom-meals-container"></div>
+
+      <!-- Add Custom Meal card -->
+      <div class="meal-card add-meal-card" id="add-custom-meal-btn">
+        <div class="add-meal-inner">
+          <span class="add-meal-plus">+</span>
+          <span class="add-meal-label">Add Custom Meal</span>
+        </div>
+      </div>
     </main>
   </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-btn" id="nav-history">
+      <span class="nav-icon">📅</span>
+      <span class="nav-label">History</span>
+    </button>
+    <button class="nav-btn nav-btn--active" id="nav-tracking">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">Tracking</span>
+    </button>
+    <button class="nav-btn" id="nav-saved">
+      <span class="nav-icon">⭐</span>
+      <span class="nav-label">Saved Meals</span>
+    </button>
+  </nav>
 
   <!-- ===== MODALS ===== -->
 
@@ -213,6 +240,23 @@
         <input id="qty-servings" type="number" min="0.25" step="0.25" value="1" class="text-input" />
         <div class="qty-preview" id="qty-preview"></div>
         <button id="btn-confirm-add" class="primary-btn full-width" style="margin-top:12px">Add to Meal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Custom Meal Modal -->
+  <div id="modal-new-meal" class="modal-overlay hidden">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h2>New Meal</h2>
+        <button class="close-btn" data-close="modal-new-meal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label class="field-label">Choose Emoji</label>
+        <div class="emoji-grid" id="emoji-grid"></div>
+        <label class="field-label">Meal Name</label>
+        <input id="new-meal-name" type="text" placeholder="e.g. Pre-workout" class="text-input" maxlength="30" />
+        <button id="btn-create-meal" class="primary-btn full-width" style="margin-top:16px">Create Meal</button>
       </div>
     </div>
   </div>

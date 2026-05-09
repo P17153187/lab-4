@@ -3,7 +3,8 @@ const TODAY = new Date().toISOString().slice(0, 10);
 
 let state = {
   goal: 2000,
-  meals: { breakfast: [], lunch: [], dinner: [], snacks: [] }
+  meals: { breakfast: [], lunch: [], dinner: [], snacks: [] },
+  customMeals: []   // [{ id, name, emoji }] — persisted separately (not per-day)
 };
 
 /* ===== Persistence ===== */
@@ -16,19 +17,32 @@ function loadState() {
     }
     const goalStr = localStorage.getItem('calorie-tracker-goal');
     if (goalStr) state.goal = parseInt(goalStr, 10);
+
+    // Custom meals persist across days
+    const cm = localStorage.getItem('calorie-tracker-custom-meals');
+    if (cm) {
+      state.customMeals = JSON.parse(cm);
+      // Ensure each custom meal has an entry in today's meals
+      for (const m of state.customMeals) {
+        if (!state.meals[m.id]) state.meals[m.id] = [];
+      }
+    }
   } catch (_) {}
 }
 
 function saveState() {
   localStorage.setItem('calorie-tracker-' + TODAY, JSON.stringify({ meals: state.meals }));
   localStorage.setItem('calorie-tracker-goal', String(state.goal));
+  localStorage.setItem('calorie-tracker-custom-meals', JSON.stringify(state.customMeals));
 }
 
 /* ===== Render ===== */
 const RING_CIRCUMFERENCE = 2 * Math.PI * 50;
 
 function renderAll() {
-  const meals = ['breakfast', 'lunch', 'dinner', 'snacks'];
+  renderCustomMealCards();
+  const meals = ['breakfast', 'lunch', 'dinner', 'snacks',
+                 ...state.customMeals.map(m => m.id)];
   let totalCals = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0;
 
   for (const meal of meals) {
@@ -66,6 +80,43 @@ function renderAll() {
   } else {
     ringEl.style.strokeDashoffset = RING_CIRCUMFERENCE;
   }
+}
+
+/* ===== Custom Meal Cards ===== */
+const MEAL_EMOJIS = ['🥘','🫕','💪','🏋️','🥤','🍵','🧃','🥙','🌮','🫔',
+                     '🍜','🥣','🧇','🥚','🥩','🫙','🍱','🍛','🥐','🍚'];
+
+function renderCustomMealCards() {
+  const container = document.getElementById('custom-meals-container');
+  // Only rebuild DOM if card count changed; otherwise just update contents
+  const existing = container.querySelectorAll('.meal-card');
+  if (existing.length !== state.customMeals.length) {
+    container.innerHTML = '';
+    for (const m of state.customMeals) {
+      container.appendChild(buildCustomMealCard(m));
+    }
+  }
+}
+
+function buildCustomMealCard({ id, name, emoji }) {
+  const div = document.createElement('div');
+  div.className = 'meal-card';
+  div.id = 'meal-' + id;
+  div.innerHTML = `
+    <div class="meal-header">
+      <div>
+        <span class="meal-icon">${emoji}</span>
+        <span class="meal-title">${escHtml(name)}</span>
+      </div>
+      <div class="meal-header-right">
+        <span class="meal-cals" id="cals-${id}">0 kcal</span>
+        <button class="meal-delete-btn" data-delete-meal="${id}" title="Remove meal">✕</button>
+        <button class="add-btn" data-meal="${id}">+ Add</button>
+      </div>
+    </div>
+    <ul class="food-list" id="list-${id}"></ul>
+  `;
+  return div;
 }
 
 function buildFoodItem(meal, idx, item) {
@@ -123,6 +174,7 @@ document.getElementById('btn-save-goal').addEventListener('click', () => {
 document.getElementById('btn-reset-day').addEventListener('click', () => {
   if (confirm('Reset all food entries for today?')) {
     state.meals = { breakfast: [], lunch: [], dinner: [], snacks: [] };
+    for (const m of state.customMeals) state.meals[m.id] = [];
     saveState();
     renderAll();
     closeModal('modal-settings');
@@ -135,17 +187,69 @@ let pendingFood  = null;
 let scannerInstance = null;
 let scannerActive   = false;
 
-document.querySelectorAll('.add-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    currentMeal = btn.dataset.meal;
-    const title = currentMeal.charAt(0).toUpperCase() + currentMeal.slice(1);
-    document.getElementById('modal-add-title').textContent = 'Add to ' + title;
-    document.getElementById('search-results').innerHTML = '';
-    document.getElementById('food-search-input').value = '';
-    document.getElementById('barcode-result').classList.add('hidden');
-    switchTab('search');
-    openModal('modal-add');
+// Event delegation — works for both hardcoded and dynamically added meal cards
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.add-btn');
+  if (!btn) return;
+  currentMeal = btn.dataset.meal;
+  const cm = state.customMeals.find(m => m.id === currentMeal);
+  const title = cm ? cm.name : (currentMeal.charAt(0).toUpperCase() + currentMeal.slice(1));
+  document.getElementById('modal-add-title').textContent = 'Add to ' + title;
+  document.getElementById('search-results').innerHTML = '';
+  document.getElementById('food-search-input').value = '';
+  document.getElementById('barcode-result').classList.add('hidden');
+  switchTab('search');
+  openModal('modal-add');
+});
+
+/* ===== Delete Custom Meal ===== */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-delete-meal]');
+  if (!btn) return;
+  const id = btn.dataset.deleteMeal;
+  const meal = state.customMeals.find(m => m.id === id);
+  if (!meal) return;
+  if (!confirm(`Remove "${meal.name}" and all its entries?`)) return;
+  state.customMeals = state.customMeals.filter(m => m.id !== id);
+  delete state.meals[id];
+  saveState();
+  renderAll();
+});
+
+/* ===== Custom Meal Creation ===== */
+document.getElementById('add-custom-meal-btn').addEventListener('click', () => {
+  // Populate emoji grid
+  const grid = document.getElementById('emoji-grid');
+  grid.innerHTML = '';
+  MEAL_EMOJIS.forEach(em => {
+    const span = document.createElement('button');
+    span.className = 'emoji-opt';
+    span.textContent = em;
+    span.addEventListener('click', () => {
+      grid.querySelectorAll('.emoji-opt').forEach(s => s.classList.remove('chosen'));
+      span.classList.add('chosen');
+    });
+    grid.appendChild(span);
   });
+  // Default selection
+  grid.querySelector('.emoji-opt').classList.add('chosen');
+  document.getElementById('new-meal-name').value = '';
+  openModal('modal-new-meal');
+});
+
+document.getElementById('btn-create-meal').addEventListener('click', () => {
+  const name = document.getElementById('new-meal-name').value.trim();
+  if (!name) { alert('Please enter a meal name.'); return; }
+
+  const chosen = document.getElementById('emoji-grid').querySelector('.emoji-opt.chosen');
+  const emoji  = chosen ? chosen.textContent : '🥘';
+  const id     = 'custom-' + Date.now();
+
+  state.customMeals.push({ id, name, emoji });
+  state.meals[id] = [];
+  saveState();
+  renderAll();
+  closeModal('modal-new-meal');
 });
 
 document.querySelector('[data-close="modal-add"]').addEventListener('click', stopScanner);
