@@ -3,7 +3,7 @@ const TODAY = new Date().toISOString().slice(0, 10);
 const OB_KEY = 'calorie-tracker-onboarded';
 
 let state = {
-  goal: 2000,
+  goal: null,
   meals: { breakfast: [], lunch: [], dinner: [], snacks: [] },
   customMeals: [],    // [{ id, name, emoji }] — persisted separately (not per-day)
   hiddenMeals: []     // built-in meal IDs hidden by the user
@@ -664,7 +664,9 @@ initOnboarding();
 
 /* ===== Onboarding ===== */
 function initOnboarding() {
-  if (localStorage.getItem(OB_KEY) && state.goal) return;
+  const onboarded = localStorage.getItem(OB_KEY);
+  const savedGoal = localStorage.getItem('calorie-tracker-goal');
+  if (onboarded && savedGoal) return;
   document.getElementById('onboarding').classList.remove('hidden');
 }
 
