@@ -27,11 +27,35 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  min-height: 100vh;
-  /* Safe area for notches / gesture nav bars */
-  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  height: 100vh;
+  overflow: hidden;
   padding-left:  env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
+}
+
+/* ===== Swipe Layout ===== */
+.view-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(64px + env(safe-area-inset-bottom));
+  overflow: hidden;
+}
+.view-strip {
+  display: flex;
+  width: 300%;
+  height: 100%;
+  transform: translateX(-33.333%); /* start on tracking (index 1) */
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+.view-page {
+  width: 33.333%;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 16px;
 }
 button { cursor: pointer; font-family: inherit; }
 input { font-family: inherit; }
@@ -691,11 +715,53 @@ header {
 }
 .ob-back-btn:hover { color: var(--text); }
 
-/* ===== View pages ===== */
-.view-page {
-  padding-bottom: calc(80px + env(safe-area-inset-bottom));
-  min-height: 100vh;
+/* ===== Log Day ===== */
+.log-day-section {
+  padding: 8px 16px 24px;
+  max-width: 560px;
+  margin: 0 auto;
 }
+.log-day-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.log-day-btn.completed {
+  border-color: var(--success);
+  background: rgba(62, 207, 142, 0.12);
+  color: var(--success);
+}
+.log-day-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: .95rem;
+}
+.log-day-summary-row:last-of-type { border-bottom: none; }
+.log-day-summary-label { color: var(--text-muted); }
+.log-day-summary-val   { font-weight: 600; color: var(--text); }
+.log-day-summary-val.over  { color: var(--danger); }
+.log-day-summary-val.under { color: var(--success); }
+.log-day-date {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: .85rem;
+  margin-bottom: 16px;
+}
+
+/* ===== View pages ===== */
 .page-header {
   padding: 20px 20px 4px;
 }

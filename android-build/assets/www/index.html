@@ -19,190 +19,201 @@
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 </head>
 <body>
-  <div id="app">
-    <!-- Header -->
-    <header>
-      <div class="header-inner">
-        <button id="btn-settings" class="icon-btn" title="Settings" aria-label="Settings">&#9881;</button>
-      </div>
-    </header>
+  <!-- ===== VIEW STRIP (swipeable) ===== -->
+  <div class="view-container">
+    <div class="view-strip" id="view-strip">
 
-    <!-- Daily Summary -->
-    <section class="daily-summary">
-      <div class="summary-row">
-        <div class="summary-stat">
-          <span class="stat-value" id="stat-consumed">0</span>
-          <span class="stat-label">Consumed</span>
+      <!-- View 0: History -->
+      <div class="view-page" id="view-history">
+        <div class="page-header">
+          <h2 class="page-title">History</h2>
         </div>
-        <div class="ring-wrap">
-          <svg viewBox="0 0 120 120" class="ring-svg">
-            <circle class="ring-bg" cx="60" cy="60" r="50" />
-            <circle class="ring-fg" id="ring-fg" cx="60" cy="60" r="50" />
-          </svg>
-          <div class="ring-center">
-            <span id="ring-remaining">—</span>
-            <span class="ring-label">left</span>
+        <div class="history-controls">
+          <div class="period-tabs">
+            <button class="period-tab active" data-period="week">Week</button>
+            <button class="period-tab" data-period="month">Month</button>
+          </div>
+          <select id="history-range-select" class="text-input select-input history-select"></select>
+        </div>
+        <div class="chart-wrap">
+          <svg id="history-chart"></svg>
+        </div>
+        <div class="history-stats-grid">
+          <div class="hs-card">
+            <span class="hs-val" id="hs-avg">—</span>
+            <span class="hs-label">Avg / day</span>
+          </div>
+          <div class="hs-card">
+            <span class="hs-val" id="hs-logged">—</span>
+            <span class="hs-label">Days logged</span>
+          </div>
+          <div class="hs-card">
+            <span class="hs-val" id="hs-under">—</span>
+            <span class="hs-label">Under goal</span>
+          </div>
+          <div class="hs-card">
+            <span class="hs-val" id="hs-streak">—</span>
+            <span class="hs-label">Best streak</span>
           </div>
         </div>
-        <div class="summary-stat">
-          <span class="stat-value" id="stat-goal">—</span>
-          <span class="stat-label">Goal</span>
-        </div>
-      </div>
-      <div class="macro-bar-row">
-        <div class="macro-pill protein">
-          <span class="macro-label">Protein</span>
-          <span class="macro-val" id="mac-protein">0g</span>
-        </div>
-        <div class="macro-pill carbs">
-          <span class="macro-label">Carbs</span>
-          <span class="macro-val" id="mac-carbs">0g</span>
-        </div>
-        <div class="macro-pill fat">
-          <span class="macro-label">Fat</span>
-          <span class="macro-val" id="mac-fat">0g</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Meal Sections -->
-    <main class="meals">
-      <div class="meal-card" id="meal-breakfast">
-        <div class="meal-header">
-          <div class="meal-header-left">
-            <span class="meal-icon">🍳</span>
-            <span class="meal-title">Breakfast</span>
-            <button class="meal-remove-btn" data-hide-meal="breakfast" title="Hide">✕</button>
-          </div>
-          <div class="meal-header-right">
-            <span class="meal-cals" id="cals-breakfast">0 kcal</span>
-            <button class="add-btn" data-meal="breakfast">+ Add</button>
+        <div class="history-macros-section">
+          <div class="section-label">Daily averages</div>
+          <div class="macro-bar-row">
+            <div class="macro-pill protein">
+              <span class="macro-label">Protein</span>
+              <span class="macro-val" id="hs-protein">—</span>
+            </div>
+            <div class="macro-pill carbs">
+              <span class="macro-label">Carbs</span>
+              <span class="macro-val" id="hs-carbs">—</span>
+            </div>
+            <div class="macro-pill fat">
+              <span class="macro-label">Fat</span>
+              <span class="macro-val" id="hs-fat">—</span>
+            </div>
           </div>
         </div>
-        <ul class="food-list" id="list-breakfast"></ul>
       </div>
 
-      <div class="meal-card" id="meal-lunch">
-        <div class="meal-header">
-          <div class="meal-header-left">
-            <span class="meal-icon">🥗</span>
-            <span class="meal-title">Lunch</span>
-            <button class="meal-remove-btn" data-hide-meal="lunch" title="Hide">✕</button>
+      <!-- View 1: Tracking -->
+      <div class="view-page" id="view-tracking">
+        <header>
+          <div class="header-inner">
+            <button id="btn-settings" class="icon-btn" title="Settings" aria-label="Settings">&#9881;</button>
           </div>
-          <div class="meal-header-right">
-            <span class="meal-cals" id="cals-lunch">0 kcal</span>
-            <button class="add-btn" data-meal="lunch">+ Add</button>
+        </header>
+
+        <section class="daily-summary">
+          <div class="summary-row">
+            <div class="summary-stat">
+              <span class="stat-value" id="stat-consumed">0</span>
+              <span class="stat-label">Consumed</span>
+            </div>
+            <div class="ring-wrap">
+              <svg viewBox="0 0 120 120" class="ring-svg">
+                <circle class="ring-bg" cx="60" cy="60" r="50" />
+                <circle class="ring-fg" id="ring-fg" cx="60" cy="60" r="50" />
+              </svg>
+              <div class="ring-center">
+                <span id="ring-remaining">—</span>
+                <span class="ring-label">left</span>
+              </div>
+            </div>
+            <div class="summary-stat">
+              <span class="stat-value" id="stat-goal">—</span>
+              <span class="stat-label">Goal</span>
+            </div>
           </div>
-        </div>
-        <ul class="food-list" id="list-lunch"></ul>
-      </div>
-
-      <div class="meal-card" id="meal-dinner">
-        <div class="meal-header">
-          <div class="meal-header-left">
-            <span class="meal-icon">🍽️</span>
-            <span class="meal-title">Dinner</span>
-            <button class="meal-remove-btn" data-hide-meal="dinner" title="Hide">✕</button>
+          <div class="macro-bar-row">
+            <div class="macro-pill protein">
+              <span class="macro-label">Protein</span>
+              <span class="macro-val" id="mac-protein">0g</span>
+            </div>
+            <div class="macro-pill carbs">
+              <span class="macro-label">Carbs</span>
+              <span class="macro-val" id="mac-carbs">0g</span>
+            </div>
+            <div class="macro-pill fat">
+              <span class="macro-label">Fat</span>
+              <span class="macro-val" id="mac-fat">0g</span>
+            </div>
           </div>
-          <div class="meal-header-right">
-            <span class="meal-cals" id="cals-dinner">0 kcal</span>
-            <button class="add-btn" data-meal="dinner">+ Add</button>
+        </section>
+
+        <main class="meals">
+          <div class="meal-card" id="meal-breakfast">
+            <div class="meal-header">
+              <div class="meal-header-left">
+                <span class="meal-icon">🍳</span>
+                <span class="meal-title">Breakfast</span>
+                <button class="meal-remove-btn" data-hide-meal="breakfast" title="Hide">✕</button>
+              </div>
+              <div class="meal-header-right">
+                <span class="meal-cals" id="cals-breakfast">0 kcal</span>
+                <button class="add-btn" data-meal="breakfast">+ Add</button>
+              </div>
+            </div>
+            <ul class="food-list" id="list-breakfast"></ul>
           </div>
-        </div>
-        <ul class="food-list" id="list-dinner"></ul>
-      </div>
 
-      <div class="meal-card" id="meal-snacks">
-        <div class="meal-header">
-          <div class="meal-header-left">
-            <span class="meal-icon">🍫</span>
-            <span class="meal-title">Snacks</span>
-            <button class="meal-remove-btn" data-hide-meal="snacks" title="Hide">✕</button>
+          <div class="meal-card" id="meal-lunch">
+            <div class="meal-header">
+              <div class="meal-header-left">
+                <span class="meal-icon">🥗</span>
+                <span class="meal-title">Lunch</span>
+                <button class="meal-remove-btn" data-hide-meal="lunch" title="Hide">✕</button>
+              </div>
+              <div class="meal-header-right">
+                <span class="meal-cals" id="cals-lunch">0 kcal</span>
+                <button class="add-btn" data-meal="lunch">+ Add</button>
+              </div>
+            </div>
+            <ul class="food-list" id="list-lunch"></ul>
           </div>
-          <div class="meal-header-right">
-            <span class="meal-cals" id="cals-snacks">0 kcal</span>
-            <button class="add-btn" data-meal="snacks">+ Add</button>
+
+          <div class="meal-card" id="meal-dinner">
+            <div class="meal-header">
+              <div class="meal-header-left">
+                <span class="meal-icon">🍽️</span>
+                <span class="meal-title">Dinner</span>
+                <button class="meal-remove-btn" data-hide-meal="dinner" title="Hide">✕</button>
+              </div>
+              <div class="meal-header-right">
+                <span class="meal-cals" id="cals-dinner">0 kcal</span>
+                <button class="add-btn" data-meal="dinner">+ Add</button>
+              </div>
+            </div>
+            <ul class="food-list" id="list-dinner"></ul>
           </div>
+
+          <div class="meal-card" id="meal-snacks">
+            <div class="meal-header">
+              <div class="meal-header-left">
+                <span class="meal-icon">🍫</span>
+                <span class="meal-title">Snacks</span>
+                <button class="meal-remove-btn" data-hide-meal="snacks" title="Hide">✕</button>
+              </div>
+              <div class="meal-header-right">
+                <span class="meal-cals" id="cals-snacks">0 kcal</span>
+                <button class="add-btn" data-meal="snacks">+ Add</button>
+              </div>
+            </div>
+            <ul class="food-list" id="list-snacks"></ul>
+          </div>
+
+          <div id="custom-meals-container"></div>
+
+          <div class="meal-card add-meal-card" id="add-custom-meal-btn">
+            <div class="add-meal-inner">
+              <span class="add-meal-plus">+</span>
+              <span class="add-meal-label">Add Custom Meal</span>
+            </div>
+          </div>
+        </main>
+
+        <!-- Log day button -->
+        <div class="log-day-section">
+          <button id="btn-log-day" class="log-day-btn">
+            <span id="log-day-icon">✓</span>
+            <span id="log-day-text">Finish tracking today</span>
+          </button>
         </div>
-        <ul class="food-list" id="list-snacks"></ul>
       </div>
 
-      <!-- Custom meals injected here by JS -->
-      <div id="custom-meals-container"></div>
+      <!-- View 2: Saved Meals -->
+      <div class="view-page" id="view-saved">
+        <div class="page-header">
+          <h2 class="page-title">Saved Meals</h2>
+        </div>
+        <div class="empty-state">
+          <div class="empty-icon">⭐</div>
+          <p>Save your favourite meals here for quick logging.</p>
+          <p class="empty-hint">Coming soon.</p>
+        </div>
+      </div>
 
-      <!-- Add Custom Meal card -->
-      <div class="meal-card add-meal-card" id="add-custom-meal-btn">
-        <div class="add-meal-inner">
-          <span class="add-meal-plus">+</span>
-          <span class="add-meal-label">Add Custom Meal</span>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- History View -->
-  <div id="view-history" class="view-page hidden">
-    <div class="page-header">
-      <h2 class="page-title">History</h2>
-    </div>
-    <div class="history-controls">
-      <div class="period-tabs">
-        <button class="period-tab active" data-period="week">Week</button>
-        <button class="period-tab" data-period="month">Month</button>
-      </div>
-      <select id="history-range-select" class="text-input select-input history-select"></select>
-    </div>
-    <div class="chart-wrap">
-      <svg id="history-chart"></svg>
-    </div>
-    <div class="history-stats-grid">
-      <div class="hs-card">
-        <span class="hs-val" id="hs-avg">—</span>
-        <span class="hs-label">Avg / day</span>
-      </div>
-      <div class="hs-card">
-        <span class="hs-val" id="hs-logged">—</span>
-        <span class="hs-label">Days logged</span>
-      </div>
-      <div class="hs-card">
-        <span class="hs-val" id="hs-under">—</span>
-        <span class="hs-label">Under goal</span>
-      </div>
-      <div class="hs-card">
-        <span class="hs-val" id="hs-streak">—</span>
-        <span class="hs-label">Best streak</span>
-      </div>
-    </div>
-    <div class="history-macros-section">
-      <div class="section-label">Daily averages</div>
-      <div class="macro-bar-row">
-        <div class="macro-pill protein">
-          <span class="macro-label">Protein</span>
-          <span class="macro-val" id="hs-protein">—</span>
-        </div>
-        <div class="macro-pill carbs">
-          <span class="macro-label">Carbs</span>
-          <span class="macro-val" id="hs-carbs">—</span>
-        </div>
-        <div class="macro-pill fat">
-          <span class="macro-label">Fat</span>
-          <span class="macro-val" id="hs-fat">—</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Saved Meals View -->
-  <div id="view-saved" class="view-page hidden">
-    <div class="page-header">
-      <h2 class="page-title">Saved Meals</h2>
-    </div>
-    <div class="empty-state">
-      <div class="empty-icon">⭐</div>
-      <p>Save your favourite meals here for quick logging.</p>
-      <p class="empty-hint">Coming soon.</p>
-    </div>
-  </div>
+    </div><!-- /view-strip -->
+  </div><!-- /view-container -->
 
   <!-- Bottom Nav -->
   <nav class="bottom-nav">
@@ -221,6 +232,22 @@
   </nav>
 
   <!-- ===== MODALS ===== -->
+
+  <!-- Log Day Summary Modal -->
+  <div id="modal-log-day" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="log-day-modal-title">Today's Summary</h2>
+        <button class="close-btn" data-close="modal-log-day">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="log-day-summary"></div>
+        <button id="btn-confirm-log-day" class="primary-btn full-width" style="margin-top:16px">
+          Mark Day as Complete
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Settings Modal -->
   <div id="modal-settings" class="modal-overlay hidden">

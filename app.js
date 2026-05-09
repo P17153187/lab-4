@@ -657,18 +657,122 @@ document.addEventListener('click', e => {
   renderAll();
 });
 
-/* ===== Navigation ===== */
-function switchView(navId) {
+/* ===== Navigation & Swipe ===== */
+const VIEW_ORDER = ['nav-history', 'nav-tracking', 'nav-saved'];
+let currentView = 1; // start on tracking
+
+function switchView(index) {
+  index = Math.max(0, Math.min(VIEW_ORDER.length - 1, index));
+  currentView = index;
+  document.getElementById('view-strip').style.transform =
+    `translateX(${-index * 33.333}%)`;
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-btn--active'));
-  document.getElementById(navId).classList.add('nav-btn--active');
-  document.getElementById('app').classList.toggle('hidden', navId !== 'nav-tracking');
-  document.getElementById('view-history').classList.toggle('hidden', navId !== 'nav-history');
-  document.getElementById('view-saved').classList.toggle('hidden', navId !== 'nav-saved');
-  if (navId === 'nav-history') initHistory();
+  document.getElementById(VIEW_ORDER[index]).classList.add('nav-btn--active');
+  if (index === 0) initHistory();
 }
-document.getElementById('nav-tracking').addEventListener('click', () => switchView('nav-tracking'));
-document.getElementById('nav-history').addEventListener('click',  () => switchView('nav-history'));
-document.getElementById('nav-saved').addEventListener('click',    () => switchView('nav-saved'));
+
+document.getElementById('nav-history').addEventListener('click',  () => switchView(0));
+document.getElementById('nav-tracking').addEventListener('click', () => switchView(1));
+document.getElementById('nav-saved').addEventListener('click',    () => switchView(2));
+
+// Touch swipe
+let touchX = 0, touchY = 0, swiping = false;
+const strip = document.getElementById('view-strip');
+strip.addEventListener('touchstart', e => {
+  touchX = e.touches[0].clientX;
+  touchY = e.touches[0].clientY;
+  swiping = false;
+}, { passive: true });
+strip.addEventListener('touchmove', e => {
+  const dx = e.touches[0].clientX - touchX;
+  const dy = e.touches[0].clientY - touchY;
+  if (!swiping && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) swiping = true;
+}, { passive: true });
+strip.addEventListener('touchend', e => {
+  if (!swiping) return;
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 48) switchView(currentView + (dx < 0 ? 1 : -1));
+  swiping = false;
+}, { passive: true });
+
+/* ===== Log Day ===== */
+const LOG_KEY = d => `calorie-tracker-done-${d}`;
+
+function updateLogDayBtn() {
+  const btn = document.getElementById('btn-log-day');
+  const done = !!localStorage.getItem(LOG_KEY(TODAY));
+  btn.classList.toggle('completed', done);
+  document.getElementById('log-day-icon').textContent  = done ? '✓' : '✓';
+  document.getElementById('log-day-text').textContent  = done ? 'Today logged' : 'Finish tracking today';
+}
+
+document.getElementById('btn-log-day').addEventListener('click', () => {
+  const meals = [...(['breakfast','lunch','dinner','snacks'].filter(id => !state.hiddenMeals.includes(id))),
+                 ...state.customMeals.map(m => m.id)];
+  let totalCals = 0, protein = 0, carbs = 0, fat = 0;
+  for (const m of meals) {
+    for (const item of (state.meals[m] || [])) {
+      totalCals += item.calories || 0;
+      protein   += item.protein  || 0;
+      carbs     += item.carbs    || 0;
+      fat       += item.fat      || 0;
+    }
+  }
+
+  const d = new Date();
+  const dateLabel = d.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const remaining = state.goal ? state.goal - totalCals : null;
+  const overUnder = remaining != null
+    ? (remaining >= 0
+        ? `<span class="log-day-summary-val under">↓ ${Math.round(remaining)} under goal</span>`
+        : `<span class="log-day-summary-val over">↑ ${Math.round(-remaining)} over goal</span>`)
+    : '<span class="log-day-summary-val">—</span>';
+
+  document.getElementById('log-day-modal-title').textContent =
+    localStorage.getItem(LOG_KEY(TODAY)) ? 'Today\'s Log' : 'Finish Today?';
+
+  document.getElementById('log-day-summary').innerHTML = `
+    <p class="log-day-date">${dateLabel}</p>
+    <div class="log-day-summary-row">
+      <span class="log-day-summary-label">Calories</span>
+      <span class="log-day-summary-val">${Math.round(totalCals).toLocaleString()} kcal</span>
+    </div>
+    ${state.goal ? `<div class="log-day-summary-row">
+      <span class="log-day-summary-label">Goal</span>
+      <span class="log-day-summary-val">${state.goal.toLocaleString()} kcal</span>
+    </div>
+    <div class="log-day-summary-row">
+      <span class="log-day-summary-label">vs Goal</span>
+      ${overUnder}
+    </div>` : ''}
+    <div class="log-day-summary-row">
+      <span class="log-day-summary-label">Protein</span>
+      <span class="log-day-summary-val">${protein.toFixed(1)}g</span>
+    </div>
+    <div class="log-day-summary-row">
+      <span class="log-day-summary-label">Carbs</span>
+      <span class="log-day-summary-val">${carbs.toFixed(1)}g</span>
+    </div>
+    <div class="log-day-summary-row">
+      <span class="log-day-summary-label">Fat</span>
+      <span class="log-day-summary-val">${fat.toFixed(1)}g</span>
+    </div>
+  `;
+
+  const confirmBtn = document.getElementById('btn-confirm-log-day');
+  if (localStorage.getItem(LOG_KEY(TODAY))) {
+    confirmBtn.textContent = 'Done';
+    confirmBtn.onclick = () => closeModal('modal-log-day');
+  } else {
+    confirmBtn.textContent = 'Mark Day as Complete';
+    confirmBtn.onclick = () => {
+      localStorage.setItem(LOG_KEY(TODAY), '1');
+      updateLogDayBtn();
+      closeModal('modal-log-day');
+    };
+  }
+  openModal('modal-log-day');
+});
 
 /* ===== History ===== */
 let historyMode = 'week';
@@ -920,6 +1024,7 @@ document.getElementById('history-range-select').addEventListener('change', rende
 /* ===== Init ===== */
 loadState();
 renderAll();
+updateLogDayBtn();
 initOnboarding();
 
 /* ===== Onboarding ===== */
