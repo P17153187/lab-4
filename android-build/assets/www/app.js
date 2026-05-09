@@ -720,7 +720,7 @@ function launchConfetti() {
   const DURATION = 2800;
   let start = null;
 
-  (function frame(ts) {
+  requestAnimationFrame(function frame(ts) {
     if (!start) start = ts;
     const elapsed = ts - start;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -743,7 +743,7 @@ function launchConfetti() {
 
     if (elapsed < DURATION) requestAnimationFrame(frame);
     else canvas.remove();
-  })();
+  });
 }
 
 /* ===== Log Day ===== */
