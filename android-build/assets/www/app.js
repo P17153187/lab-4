@@ -34,10 +34,10 @@ function renderAll() {
   for (const meal of meals) {
     const items = state.meals[meal];
     const mealCals = items.reduce((s, i) => s + i.calories, 0);
-    totalCals += mealCals;
+    totalCals    += mealCals;
     totalProtein += items.reduce((s, i) => s + (i.protein || 0), 0);
-    totalCarbs += items.reduce((s, i) => s + (i.carbs || 0), 0);
-    totalFat += items.reduce((s, i) => s + (i.fat || 0), 0);
+    totalCarbs   += items.reduce((s, i) => s + (i.carbs   || 0), 0);
+    totalFat     += items.reduce((s, i) => s + (i.fat     || 0), 0);
 
     document.getElementById('cals-' + meal).textContent = Math.round(mealCals) + ' kcal';
 
@@ -48,22 +48,19 @@ function renderAll() {
     }
   }
 
-  // Summary numbers
   document.getElementById('stat-consumed').textContent = Math.round(totalCals);
   document.getElementById('stat-goal').textContent = state.goal || '—';
   document.getElementById('mac-protein').textContent = totalProtein.toFixed(1) + 'g';
-  document.getElementById('mac-carbs').textContent = totalCarbs.toFixed(1) + 'g';
-  document.getElementById('mac-fat').textContent = totalFat.toFixed(1) + 'g';
+  document.getElementById('mac-carbs').textContent   = totalCarbs.toFixed(1)   + 'g';
+  document.getElementById('mac-fat').textContent     = totalFat.toFixed(1)     + 'g';
 
-  // Ring
   const ringEl = document.getElementById('ring-fg');
   const remaining = state.goal - totalCals;
   document.getElementById('ring-remaining').textContent = state.goal ? Math.abs(Math.round(remaining)) : '—';
 
   if (state.goal) {
     const pct = Math.min(totalCals / state.goal, 1);
-    const offset = RING_CIRCUMFERENCE * (1 - pct);
-    ringEl.style.strokeDashoffset = offset;
+    ringEl.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - pct);
     ringEl.classList.toggle('over', remaining < 0);
     document.getElementById('ring-remaining').style.color = remaining < 0 ? 'var(--danger)' : 'var(--text)';
   } else {
@@ -74,11 +71,10 @@ function renderAll() {
 function buildFoodItem(meal, idx, item) {
   const li = document.createElement('li');
   li.className = 'food-item';
-
   const macroStr = [
     item.protein != null ? `P ${item.protein.toFixed(1)}g` : null,
-    item.carbs  != null ? `C ${item.carbs.toFixed(1)}g`   : null,
-    item.fat    != null ? `F ${item.fat.toFixed(1)}g`     : null
+    item.carbs   != null ? `C ${item.carbs.toFixed(1)}g`   : null,
+    item.fat     != null ? `F ${item.fat.toFixed(1)}g`     : null
   ].filter(Boolean).join('  ·  ');
 
   li.innerHTML = `
@@ -95,24 +91,19 @@ function buildFoodItem(meal, idx, item) {
 }
 
 function escHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 /* ===== Modal helpers ===== */
-function openModal(id) {
-  document.getElementById(id).classList.remove('hidden');
-}
-function closeModal(id) {
-  document.getElementById(id).classList.add('hidden');
-}
+function openModal(id)  { document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
 document.querySelectorAll('[data-close]').forEach(btn => {
   btn.addEventListener('click', () => closeModal(btn.dataset.close));
 });
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) closeModal(overlay.id);
-  });
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
 });
 
 /* ===== Settings ===== */
@@ -120,7 +111,6 @@ document.getElementById('btn-settings').addEventListener('click', () => {
   document.getElementById('input-goal').value = state.goal || '';
   openModal('modal-settings');
 });
-
 document.getElementById('btn-save-goal').addEventListener('click', () => {
   const val = parseInt(document.getElementById('input-goal').value, 10);
   if (!isNaN(val) && val > 0) {
@@ -130,7 +120,6 @@ document.getElementById('btn-save-goal').addEventListener('click', () => {
     closeModal('modal-settings');
   }
 });
-
 document.getElementById('btn-reset-day').addEventListener('click', () => {
   if (confirm('Reset all food entries for today?')) {
     state.meals = { breakfast: [], lunch: [], dinner: [], snacks: [] };
@@ -142,9 +131,9 @@ document.getElementById('btn-reset-day').addEventListener('click', () => {
 
 /* ===== Add Food Modal ===== */
 let currentMeal = 'breakfast';
-let pendingFood = null;
+let pendingFood  = null;
 let scannerInstance = null;
-let scannerActive = false;
+let scannerActive   = false;
 
 document.querySelectorAll('.add-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -159,7 +148,6 @@ document.querySelectorAll('.add-btn').forEach(btn => {
   });
 });
 
-// Close add modal — also stop scanner
 document.querySelector('[data-close="modal-add"]').addEventListener('click', stopScanner);
 document.getElementById('modal-add').addEventListener('click', e => {
   if (e.target === document.getElementById('modal-add')) stopScanner();
@@ -177,14 +165,10 @@ function switchTab(tab) {
     p.classList.toggle('active', active);
     p.classList.toggle('hidden', !active);
   });
-  if (tab === 'barcode') {
-    startScanner();
-  } else {
-    stopScanner();
-  }
+  if (tab === 'barcode') startScanner(); else stopScanner();
 }
 
-/* ===== Food Search (Open Food Facts) ===== */
+/* ===== Food Search ===== */
 document.getElementById('btn-search').addEventListener('click', doSearch);
 document.getElementById('food-search-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') doSearch();
@@ -197,78 +181,142 @@ async function doSearch() {
   const container = document.getElementById('search-results');
   container.innerHTML = '<div class="loading">Searching…</div>';
 
+  // Try USDA first (generic English foods with per-item portions)
+  let items = [];
   try {
-    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=20&fields=product_name,brands,nutriments,serving_size,serving_quantity`;
-    const res = await fetch(url);
-    const data = await res.json();
+    items = await searchUSDA(query);
+  } catch (_) {}
 
-    const products = (data.products || []).filter(p =>
-      p.product_name &&
-      p.nutriments &&
-      (p.nutriments['energy-kcal_100g'] || p.nutriments['energy-kcal_serving'] || p.nutriments['energy-kcal'])
-    );
-
-    if (!products.length) {
-      container.innerHTML = '<div class="no-results">No results found. Try the Manual tab.</div>';
-      return;
-    }
-
-    container.innerHTML = '';
-    products.slice(0, 15).forEach(p => {
-      const item = buildFoodFromProduct(p);
-      if (!item) return;
-
-      const div = document.createElement('div');
-      div.className = 'result-item';
-      div.innerHTML = `
-        <div>
-          <div class="result-name">${escHtml(item.name)}</div>
-          ${item.brand ? `<div class="result-brand">${escHtml(item.brand)}</div>` : ''}
-          <div class="result-brand">per ${item.servingLabel}</div>
-        </div>
-        <div class="result-cals">${Math.round(item.caloriesPer)} kcal</div>
-      `;
-      div.addEventListener('click', () => openQtyModal(item));
-      container.appendChild(div);
-    });
-  } catch (err) {
-    container.innerHTML = '<div class="no-results">Search failed. Check your connection.</div>';
+  // Fall back to Open Food Facts (English / US filtered) if USDA returns nothing
+  if (items.length === 0) {
+    try {
+      items = await searchOFF(query);
+    } catch (_) {}
   }
+
+  if (items.length === 0) {
+    container.innerHTML = '<div class="no-results">No results found. Try the Manual tab.</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'result-item';
+    const calsPer = Math.round((item.cal100 * (item.portions[0]?.grams ?? 100)) / 100);
+    div.innerHTML = `
+      <div>
+        <div class="result-name">${escHtml(item.name)}</div>
+        ${item.brand ? `<div class="result-brand">${escHtml(item.brand)}</div>` : ''}
+        <div class="result-brand">per ${escHtml(item.portions[0]?.label ?? '100g')}</div>
+      </div>
+      <div class="result-cals">${calsPer} kcal</div>
+    `;
+    div.addEventListener('click', () => openQtyModal(item));
+    container.appendChild(div);
+  });
 }
 
-function buildFoodFromProduct(p) {
-  const nm = p.nutriments;
-  const name = p.product_name || 'Unknown';
-  const brand = p.brands ? p.brands.split(',')[0].trim() : '';
+/* --- USDA FoodData Central --- */
+async function searchUSDA(query) {
+  // DEMO_KEY allows ~30 req/hr. Free account at https://fdc.nal.usda.gov/api-guide.html for more.
+  const url = 'https://api.nal.usda.gov/fdc/v1/foods/search'
+    + `?query=${encodeURIComponent(query)}`
+    + '&dataType=Foundation,SR%20Legacy'
+    + '&pageSize=20'
+    + '&api_key=DEMO_KEY';
 
-  // Prefer per-serving, fall back to per-100g
-  let caloriesPer, proteinPer, carbsPer, fatPer, servingLabel;
-  const serving100 = nm['energy-kcal_100g'];
-  const servingS = nm['energy-kcal_serving'];
+  const res  = await fetch(url);
+  const data = await res.json();
 
-  if (servingS && p.serving_size) {
-    caloriesPer = servingS;
-    proteinPer  = nm['proteins_serving'] || 0;
-    carbsPer    = nm['carbohydrates_serving'] || 0;
-    fatPer      = nm['fat_serving'] || 0;
-    servingLabel = p.serving_size;
-  } else if (serving100) {
-    caloriesPer = serving100;
-    proteinPer  = nm['proteins_100g'] || 0;
-    carbsPer    = nm['carbohydrates_100g'] || 0;
-    fatPer      = nm['fat_100g'] || 0;
-    servingLabel = '100g';
-  } else {
-    return null;
+  return (data.foods || [])
+    .map(buildUSDAItem)
+    .filter(Boolean)
+    .slice(0, 15);
+}
+
+function buildUSDAItem(food) {
+  const nm = {};
+  for (const n of (food.foodNutrients || [])) nm[n.nutrientId] = n.value;
+
+  const cal100  = nm[1008] || 0;
+  const pro100  = nm[1003] || 0;
+  const carb100 = nm[1005] || 0;
+  const fat100  = nm[1004] || 0;
+  if (!cal100) return null;
+
+  // Build portion options from USDA foodPortions
+  const portions = (food.foodPortions || [])
+    .filter(p => p.gramWeight)
+    .map(p => ({
+      label: p.portionDescription
+        || (p.amount && p.modifier ? `${p.amount} ${p.modifier}` : null)
+        || `${p.gramWeight}g`,
+      grams: p.gramWeight
+    }));
+
+  portions.push({ label: '100g', grams: 100 });
+  portions.push({ label: 'Custom (g)', grams: null });
+
+  return {
+    name: toTitleCase(food.description),
+    brand: null,
+    cal100, pro100, carb100, fat100,
+    portions
+  };
+}
+
+/* --- Open Food Facts (English fallback) --- */
+async function searchOFF(query) {
+  const url = 'https://world.openfoodfacts.org/cgi/search.pl'
+    + `?search_terms=${encodeURIComponent(query)}`
+    + '&search_simple=1&action=process&json=1'
+    + '&lc=en&tagtype_0=countries&tag_contains_0=contains&tag_0=united-states'
+    + '&page_size=20'
+    + '&fields=product_name,brands,nutriments,serving_size,serving_quantity';
+
+  const res  = await fetch(url);
+  const data = await res.json();
+
+  return (data.products || [])
+    .map(buildOFFItem)
+    .filter(Boolean)
+    .slice(0, 15);
+}
+
+function buildOFFItem(p) {
+  const nm = p.nutriments || {};
+  const cal100  = nm['energy-kcal_100g'];
+  const pro100  = nm['proteins_100g']       || 0;
+  const carb100 = nm['carbohydrates_100g']  || 0;
+  const fat100  = nm['fat_100g']            || 0;
+  if (!cal100 || !p.product_name) return null;
+
+  const portions = [];
+
+  // Add serving size if we know the gram weight
+  const servingG = parseFloat(p.serving_quantity);
+  if (p.serving_size && servingG > 0) {
+    portions.push({ label: `1 serving (${p.serving_size})`, grams: servingG });
   }
+  portions.push({ label: '100g', grams: 100 });
+  portions.push({ label: 'Custom (g)', grams: null });
 
-  return { name, brand, caloriesPer, proteinPer, carbsPer, fatPer, servingLabel };
+  return {
+    name:  p.product_name,
+    brand: p.brands ? p.brands.split(',')[0].trim() : null,
+    cal100, pro100, carb100, fat100,
+    portions
+  };
+}
+
+function toTitleCase(str) {
+  return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
 }
 
 /* ===== Barcode Scanner ===== */
 async function startScanner() {
   if (scannerActive) return;
-
   const container = document.getElementById('scanner-container');
   container.innerHTML = '';
   document.getElementById('barcode-result').classList.add('hidden');
@@ -278,22 +326,18 @@ async function startScanner() {
     await scannerInstance.start(
       { facingMode: 'environment' },
       { fps: 10, qrbox: { width: 260, height: 130 } },
-      onBarcodeScanned,
-      () => {}
+      onBarcodeScanned, () => {}
     );
     scannerActive = true;
-  } catch (err) {
-    container.innerHTML = `<div class="no-results" style="padding:30px 20px">Camera access denied or not available.<br>Use the Search or Manual tab instead.</div>`;
+  } catch (_) {
+    container.innerHTML = '<div class="no-results" style="padding:30px 20px">Camera access denied or unavailable.<br>Use Search or Manual instead.</div>';
   }
 }
 
 async function stopScanner() {
   if (!scannerActive || !scannerInstance) return;
-  try {
-    await scannerInstance.stop();
-    scannerInstance.clear();
-  } catch (_) {}
-  scannerActive = false;
+  try { await scannerInstance.stop(); scannerInstance.clear(); } catch (_) {}
+  scannerActive   = false;
   scannerInstance = null;
 }
 
@@ -306,26 +350,26 @@ async function onBarcodeScanned(barcode) {
   resultEl.innerHTML = '<div class="loading">Looking up barcode…</div>';
 
   try {
-    const url = `https://world.openfoodfacts.org/api/v0/product/${encodeURIComponent(barcode)}.json`;
-    const res = await fetch(url);
+    const url  = `https://world.openfoodfacts.org/api/v0/product/${encodeURIComponent(barcode)}.json`;
+    const res  = await fetch(url);
     const data = await res.json();
 
     if (data.status !== 1 || !data.product) {
-      resultEl.innerHTML = `<div class="no-results">Product not found (${barcode}).<br>Try searching by name instead.</div>`;
+      resultEl.innerHTML = `<div class="no-results">Product not found (${barcode}).</div>`;
       return;
     }
 
-    const item = buildFoodFromProduct(data.product);
+    const item = buildOFFItem(data.product);
     if (!item) {
-      resultEl.innerHTML = `<div class="no-results">No nutrition data for this product.</div>`;
+      resultEl.innerHTML = '<div class="no-results">No nutrition data for this product.</div>';
       return;
     }
 
+    const calsPer = Math.round((item.cal100 * (item.portions[0]?.grams ?? 100)) / 100);
     resultEl.innerHTML = `
       <h3>${escHtml(item.name)}</h3>
       ${item.brand ? `<p>${escHtml(item.brand)}</p>` : ''}
-      <p>Per ${escHtml(item.servingLabel)} · P ${item.proteinPer.toFixed(1)}g · C ${item.carbsPer.toFixed(1)}g · F ${item.fatPer.toFixed(1)}g</p>
-      <div class="barcode-result-cals">${Math.round(item.caloriesPer)} kcal</div>
+      <div class="barcode-result-cals">${calsPer} kcal <span style="font-size:.75rem;font-weight:400;color:var(--text-muted)">per ${escHtml(item.portions[0]?.label ?? '100g')}</span></div>
     `;
 
     const addBtn = document.createElement('button');
@@ -334,57 +378,106 @@ async function onBarcodeScanned(barcode) {
     addBtn.textContent = 'Add to Meal';
     addBtn.addEventListener('click', () => openQtyModal(item));
     resultEl.appendChild(addBtn);
-
-  } catch (err) {
+  } catch (_) {
     resultEl.innerHTML = '<div class="no-results">Lookup failed. Check your connection.</div>';
   }
 }
 
 /* ===== Manual Entry ===== */
 document.getElementById('btn-add-manual').addEventListener('click', () => {
-  const name = document.getElementById('manual-name').value.trim();
+  const name     = document.getElementById('manual-name').value.trim();
   const calories = parseFloat(document.getElementById('manual-calories').value);
-
   if (!name || isNaN(calories) || calories < 0) {
     alert('Please enter a food name and valid calorie amount.');
     return;
   }
-
   const protein = parseFloat(document.getElementById('manual-protein').value) || 0;
   const carbs   = parseFloat(document.getElementById('manual-carbs').value)   || 0;
   const fat     = parseFloat(document.getElementById('manual-fat').value)     || 0;
 
   addFoodToMeal({ name, calories, protein, carbs, fat });
-
-  // Clear fields
   ['manual-name','manual-calories','manual-protein','manual-carbs','manual-fat']
     .forEach(id => { document.getElementById(id).value = ''; });
+  closeModal('modal-add');
 });
 
 /* ===== Quantity Modal ===== */
-function openQtyModal(foodItem) {
-  pendingFood = foodItem;
-  document.getElementById('qty-food-name').textContent = foodItem.name;
+function openQtyModal(item) {
+  pendingFood = item;
+  document.getElementById('qty-food-name').textContent = item.name;
+
+  // Populate portion select
+  const sel = document.getElementById('qty-portion');
+  sel.innerHTML = '';
+  item.portions.forEach((p, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = p.grams != null
+      ? `${p.label}  (${Math.round((item.cal100 * p.grams) / 100)} kcal)`
+      : p.label;
+    sel.appendChild(opt);
+  });
+
   document.getElementById('qty-servings').value = '1';
-  document.getElementById('qty-info').innerHTML = `
-    Per serving (${escHtml(foodItem.servingLabel || '1 serving')})<br>
-    <strong>${Math.round(foodItem.caloriesPer)} kcal</strong>
-    · P ${foodItem.proteinPer.toFixed(1)}g
-    · C ${foodItem.carbsPer.toFixed(1)}g
-    · F ${foodItem.fatPer.toFixed(1)}g
-  `;
+  document.getElementById('qty-custom-g').value = '100';
+  updateQtyCustomVisibility();
+  updateQtyPreview();
   openModal('modal-qty');
 }
 
+function selectedPortion() {
+  if (!pendingFood) return null;
+  const idx = parseInt(document.getElementById('qty-portion').value, 10);
+  return pendingFood.portions[idx] || null;
+}
+
+function updateQtyCustomVisibility() {
+  const p = selectedPortion();
+  document.getElementById('qty-custom-wrap').classList.toggle('hidden', !!(p && p.grams != null));
+}
+
+function updateQtyPreview() {
+  if (!pendingFood) return;
+  const p        = selectedPortion();
+  const grams    = p && p.grams != null
+    ? p.grams
+    : (parseFloat(document.getElementById('qty-custom-g').value) || 100);
+  const servings = parseFloat(document.getElementById('qty-servings').value) || 1;
+  const total    = (grams * servings) / 100;
+
+  const cals    = pendingFood.cal100  * total;
+  const protein = pendingFood.pro100  * total;
+  const carbs   = pendingFood.carb100 * total;
+  const fat     = pendingFood.fat100  * total;
+
+  document.getElementById('qty-preview').innerHTML = `
+    <div class="preview-cals">${Math.round(cals)} kcal</div>
+    <div class="preview-macros">P ${protein.toFixed(1)}g  ·  C ${carbs.toFixed(1)}g  ·  F ${fat.toFixed(1)}g</div>
+  `;
+}
+
+document.getElementById('qty-portion').addEventListener('change', () => {
+  updateQtyCustomVisibility();
+  updateQtyPreview();
+});
+document.getElementById('qty-servings').addEventListener('input', updateQtyPreview);
+document.getElementById('qty-custom-g').addEventListener('input', updateQtyPreview);
+
 document.getElementById('btn-confirm-add').addEventListener('click', () => {
   if (!pendingFood) return;
+  const p       = selectedPortion();
+  const grams   = p && p.grams != null
+    ? p.grams
+    : (parseFloat(document.getElementById('qty-custom-g').value) || 100);
   const servings = parseFloat(document.getElementById('qty-servings').value) || 1;
+  const total    = (grams * servings) / 100;
+
   addFoodToMeal({
     name:     pendingFood.name,
-    calories: pendingFood.caloriesPer * servings,
-    protein:  pendingFood.proteinPer  * servings,
-    carbs:    pendingFood.carbsPer    * servings,
-    fat:      pendingFood.fatPer      * servings
+    calories: pendingFood.cal100  * total,
+    protein:  pendingFood.pro100  * total,
+    carbs:    pendingFood.carb100 * total,
+    fat:      pendingFood.fat100  * total
   });
   closeModal('modal-qty');
   closeModal('modal-add');

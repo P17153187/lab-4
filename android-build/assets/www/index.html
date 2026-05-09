@@ -204,9 +204,15 @@
         <button class="close-btn" data-close="modal-qty">&times;</button>
       </div>
       <div class="modal-body">
-        <div class="qty-info" id="qty-info"></div>
-        <label class="field-label">Servings</label>
+        <label class="field-label">Serving Size</label>
+        <select id="qty-portion" class="text-input select-input"></select>
+        <div id="qty-custom-wrap" class="hidden">
+          <label class="field-label">Amount (g)</label>
+          <input id="qty-custom-g" type="number" min="1" step="1" value="100" class="text-input" />
+        </div>
+        <label class="field-label">Quantity</label>
         <input id="qty-servings" type="number" min="0.25" step="0.25" value="1" class="text-input" />
+        <div class="qty-preview" id="qty-preview"></div>
         <button id="btn-confirm-add" class="primary-btn full-width" style="margin-top:12px">Add to Meal</button>
       </div>
     </div>
