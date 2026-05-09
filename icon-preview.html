@@ -2,321 +2,246 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<title>Icon Options — Ring + Fork Iterations</title>
+<title>Icon — Macro Ring + Fork (fork fix)</title>
 <style>
   body { background:#181a24; font-family:sans-serif; display:flex; flex-direction:column; align-items:center; padding:40px 20px; gap:48px; }
-  h1 { color:#fff; margin:0; font-size:1.3rem; letter-spacing:.05em; }
-  .row { display:flex; gap:48px; flex-wrap:wrap; justify-content:center; }
+  h1 { color:#fff; margin:0; font-size:1.2rem; letter-spacing:.05em; }
+  p  { color:#666; font-size:.85rem; margin:0; }
+  .row { display:flex; gap:56px; flex-wrap:wrap; justify-content:center; }
   .option { display:flex; flex-direction:column; align-items:center; gap:16px; }
-  .label { color:#a0a8c0; font-size:.85rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; text-align:center; max-width:160px; }
-  .sizes { display:flex; align-items:flex-end; gap:16px; }
-  .tag { color:#555; font-size:.65rem; margin-top:4px; text-align:center; }
-  .sizes > div { display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .label { color:#a0a8c0; font-size:.82rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; }
+  .sizes { display:flex; align-items:flex-end; gap:20px; }
+  .sizes > div { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .tag { color:#444; font-size:.65rem; }
   svg { border-radius:22%; display:block; }
 </style>
 </head>
 <body>
-<h1>Ring + Fork — Iterations</h1>
+<h1>Macro Ring — Fork Variants</h1>
+<p>Same colour ring, three fork styles. Reply 1, 2 or 3.</p>
+
 <div class="row">
 
-  <!-- A: Fork & Knife, clean gradient ring -->
+  <!-- shared ring macro def (reused via CSS class, just copy the ring circles) -->
+
+  <!-- Fork 1: 4 thin tines, curved neck, solid handle -->
   <div class="option">
-    <div class="label">A — Fork &amp; Knife</div>
+    <div class="label">1 — Four Tines</div>
     <div class="sizes">
-      <div><svg width="48" height="48" viewBox="0 0 100 100"><defs>
-        <linearGradient id="rA1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#7eb8ff"/>
-          <stop offset="100%" stop-color="#3a6fd8"/>
-        </linearGradient>
-      </defs>
-        <rect width="100" height="100" rx="22" fill="#0f1117"/>
-        <circle cx="50" cy="50" r="36" fill="none" stroke="#1a2340" stroke-width="8"/>
-        <circle cx="50" cy="50" r="36" fill="none" stroke="url(#rA1)" stroke-width="8"
-          stroke-dasharray="170 226" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-        <!-- fork (left of centre) -->
-        <g stroke="#7eb8ff" stroke-width="2.8" stroke-linecap="round" fill="none">
-          <line x1="43" y1="64" x2="43" y2="47"/>
-          <path d="M38 36 L38 44 Q43 47 43 47 Q43 47 48 44 L48 36"/>
-          <line x1="41" y1="36" x2="41" y2="44"/>
-          <line x1="45" y1="36" x2="45" y2="44"/>
-        </g>
-        <!-- knife (right of centre) -->
-        <g stroke="#7eb8ff" stroke-width="2.8" stroke-linecap="round" fill="none">
-          <line x1="57" y1="64" x2="57" y2="36"/>
-          <path d="M57 36 Q64 40 64 48 L57 50" fill="#7eb8ff" stroke="none" opacity="0.25"/>
-          <path d="M57 36 Q64 40 64 48 L57 50" fill="none" stroke="#7eb8ff" stroke-width="2.8"/>
-        </g>
-      </svg><span class="tag">48px</span></div>
-      <div><svg width="144" height="144" viewBox="0 0 100 100"><defs>
-        <linearGradient id="rA2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#7eb8ff"/>
-          <stop offset="100%" stop-color="#3a6fd8"/>
-        </linearGradient>
-      </defs>
-        <rect width="100" height="100" rx="22" fill="#0f1117"/>
-        <circle cx="50" cy="50" r="36" fill="none" stroke="#1a2340" stroke-width="8"/>
-        <circle cx="50" cy="50" r="36" fill="none" stroke="url(#rA2)" stroke-width="8"
-          stroke-dasharray="170 226" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-        <g stroke="#7eb8ff" stroke-width="2.8" stroke-linecap="round" fill="none">
-          <line x1="43" y1="64" x2="43" y2="47"/>
-          <path d="M38 36 L38 44 Q43 47 43 47 Q43 47 48 44 L48 36"/>
-          <line x1="41" y1="36" x2="41" y2="44"/>
-          <line x1="45" y1="36" x2="45" y2="44"/>
-        </g>
-        <g stroke="#7eb8ff" stroke-width="2.8" stroke-linecap="round" fill="none">
-          <line x1="57" y1="64" x2="57" y2="36"/>
-          <path d="M57 36 Q64 40 64 48 L57 50" fill="#7eb8ff" stroke="none" opacity="0.25"/>
-          <path d="M57 36 Q64 40 64 48 L57 50" fill="none" stroke="#7eb8ff" stroke-width="2.8"/>
-        </g>
-      </svg><span class="tag">144px</span></div>
+      <div>
+        <svg width="48" height="48" viewBox="0 0 100 100">
+          <rect width="100" height="100" rx="22" fill="#0f1117"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#1a2340" stroke-width="8"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#4f8ef7" stroke-width="8"
+            stroke-dasharray="66 220" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#8b5cf6" stroke-width="8"
+            stroke-dasharray="88 220" stroke-dashoffset="-70" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#f472b6" stroke-width="8"
+            stroke-dasharray="44 220" stroke-dashoffset="-162" transform="rotate(-90 50 50)"/>
+          <g stroke="#ddeeff" stroke-width="2.2" stroke-linecap="round" fill="none">
+            <line x1="43" y1="36" x2="43" y2="46"/>
+            <line x1="47" y1="36" x2="47" y2="46"/>
+            <line x1="53" y1="36" x2="53" y2="46"/>
+            <line x1="57" y1="36" x2="57" y2="46"/>
+            <path d="M43 46 C43 51 47 53 50 53 C53 53 57 51 57 46"/>
+            <line x1="50" y1="53" x2="50" y2="66"/>
+          </g>
+        </svg>
+        <span class="tag">48px</span>
+      </div>
+      <div>
+        <svg width="120" height="120" viewBox="0 0 100 100">
+          <rect width="100" height="100" rx="22" fill="#0f1117"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#1a2340" stroke-width="8"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#4f8ef7" stroke-width="8"
+            stroke-dasharray="66 220" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#8b5cf6" stroke-width="8"
+            stroke-dasharray="88 220" stroke-dashoffset="-70" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#f472b6" stroke-width="8"
+            stroke-dasharray="44 220" stroke-dashoffset="-162" transform="rotate(-90 50 50)"/>
+          <g stroke="#ddeeff" stroke-width="2.2" stroke-linecap="round" fill="none">
+            <line x1="43" y1="36" x2="43" y2="46"/>
+            <line x1="47" y1="36" x2="47" y2="46"/>
+            <line x1="53" y1="36" x2="53" y2="46"/>
+            <line x1="57" y1="36" x2="57" y2="46"/>
+            <path d="M43 46 C43 51 47 53 50 53 C53 53 57 51 57 46"/>
+            <line x1="50" y1="53" x2="50" y2="66"/>
+          </g>
+        </svg>
+        <span class="tag">120px</span>
+      </div>
+      <div>
+        <svg width="192" height="192" viewBox="0 0 100 100">
+          <rect width="100" height="100" rx="22" fill="#0f1117"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#1a2340" stroke-width="8"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#4f8ef7" stroke-width="8"
+            stroke-dasharray="66 220" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#8b5cf6" stroke-width="8"
+            stroke-dasharray="88 220" stroke-dashoffset="-70" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#f472b6" stroke-width="8"
+            stroke-dasharray="44 220" stroke-dashoffset="-162" transform="rotate(-90 50 50)"/>
+          <g stroke="#ddeeff" stroke-width="2.2" stroke-linecap="round" fill="none">
+            <line x1="43" y1="36" x2="43" y2="46"/>
+            <line x1="47" y1="36" x2="47" y2="46"/>
+            <line x1="53" y1="36" x2="53" y2="46"/>
+            <line x1="57" y1="36" x2="57" y2="46"/>
+            <path d="M43 46 C43 51 47 53 50 53 C53 53 57 51 57 46"/>
+            <line x1="50" y1="53" x2="50" y2="66"/>
+          </g>
+        </svg>
+        <span class="tag">192px</span>
+      </div>
     </div>
   </div>
 
-  <!-- B: Glowing ring, detailed fork with plate dot -->
+  <!-- Fork 2: 3 tines, slightly wider gap, rounder neck -->
   <div class="option">
-    <div class="label">B — Glow Ring + Plate</div>
+    <div class="label">2 — Three Tines</div>
     <div class="sizes">
-      <div><svg width="48" height="48" viewBox="0 0 100 100"><defs>
-        <radialGradient id="glow1" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#4f8ef7" stop-opacity="0.3"/>
-          <stop offset="100%" stop-color="#4f8ef7" stop-opacity="0"/>
-        </radialGradient>
-        <linearGradient id="rB1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#a8d4ff"/>
-          <stop offset="60%" stop-color="#4f8ef7"/>
-          <stop offset="100%" stop-color="#2a50b8"/>
-        </linearGradient>
-      </defs>
-        <rect width="100" height="100" rx="22" fill="#0f1117"/>
-        <circle cx="50" cy="50" r="36" fill="url(#glow1)"/>
-        <circle cx="50" cy="50" r="36" fill="none" stroke="#162035" stroke-width="9"/>
-        <circle cx="50" cy="50" r="36" fill="none" stroke="url(#rB1)" stroke-width="9"
-          stroke-dasharray="180 226" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-        <!-- fork centred -->
-        <g stroke="#c8e4ff" stroke-width="3" stroke-linecap="round" fill="none">
-          <line x1="50" y1="66" x2="50" y2="49"/>
-          <path d="M44 37 L44 46 Q50 49 50 49 Q50 49 56 46 L56 37"/>
-          <line x1="47" y1="37" x2="47" y2="46"/>
-          <line x1="53" y1="37" x2="53" y2="46"/>
-        </g>
-        <!-- small plate ellipse below fork -->
-        <ellipse cx="50" cy="68" rx="10" ry="2.5" fill="none" stroke="#4f8ef7" stroke-width="2" opacity="0.6"/>
-      </svg><span class="tag">48px</span></div>
-      <div><svg width="144" height="144" viewBox="0 0 100 100"><defs>
-        <radialGradient id="glow2" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#4f8ef7" stop-opacity="0.3"/>
-          <stop offset="100%" stop-color="#4f8ef7" stop-opacity="0"/>
-        </radialGradient>
-        <linearGradient id="rB2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#a8d4ff"/>
-          <stop offset="60%" stop-color="#4f8ef7"/>
-          <stop offset="100%" stop-color="#2a50b8"/>
-        </linearGradient>
-      </defs>
-        <rect width="100" height="100" rx="22" fill="#0f1117"/>
-        <circle cx="50" cy="50" r="36" fill="url(#glow2)"/>
-        <circle cx="50" cy="50" r="36" fill="none" stroke="#162035" stroke-width="9"/>
-        <circle cx="50" cy="50" r="36" fill="none" stroke="url(#rB2)" stroke-width="9"
-          stroke-dasharray="180 226" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-        <g stroke="#c8e4ff" stroke-width="3" stroke-linecap="round" fill="none">
-          <line x1="50" y1="66" x2="50" y2="49"/>
-          <path d="M44 37 L44 46 Q50 49 50 49 Q50 49 56 46 L56 37"/>
-          <line x1="47" y1="37" x2="47" y2="46"/>
-          <line x1="53" y1="37" x2="53" y2="46"/>
-        </g>
-        <ellipse cx="50" cy="68" rx="10" ry="2.5" fill="none" stroke="#4f8ef7" stroke-width="2" opacity="0.6"/>
-      </svg><span class="tag">144px</span></div>
+      <div>
+        <svg width="48" height="48" viewBox="0 0 100 100">
+          <rect width="100" height="100" rx="22" fill="#0f1117"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#1a2340" stroke-width="8"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#4f8ef7" stroke-width="8"
+            stroke-dasharray="66 220" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#8b5cf6" stroke-width="8"
+            stroke-dasharray="88 220" stroke-dashoffset="-70" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#f472b6" stroke-width="8"
+            stroke-dasharray="44 220" stroke-dashoffset="-162" transform="rotate(-90 50 50)"/>
+          <g stroke="#ddeeff" stroke-width="2.8" stroke-linecap="round" fill="none">
+            <line x1="44" y1="36" x2="44" y2="47"/>
+            <line x1="50" y1="36" x2="50" y2="47"/>
+            <line x1="56" y1="36" x2="56" y2="47"/>
+            <path d="M44 47 C44 53 47 55 50 55 C53 55 56 53 56 47"/>
+            <line x1="50" y1="55" x2="50" y2="67"/>
+          </g>
+        </svg>
+        <span class="tag">48px</span>
+      </div>
+      <div>
+        <svg width="120" height="120" viewBox="0 0 100 100">
+          <rect width="100" height="100" rx="22" fill="#0f1117"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#1a2340" stroke-width="8"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#4f8ef7" stroke-width="8"
+            stroke-dasharray="66 220" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#8b5cf6" stroke-width="8"
+            stroke-dasharray="88 220" stroke-dashoffset="-70" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#f472b6" stroke-width="8"
+            stroke-dasharray="44 220" stroke-dashoffset="-162" transform="rotate(-90 50 50)"/>
+          <g stroke="#ddeeff" stroke-width="2.8" stroke-linecap="round" fill="none">
+            <line x1="44" y1="36" x2="44" y2="47"/>
+            <line x1="50" y1="36" x2="50" y2="47"/>
+            <line x1="56" y1="36" x2="56" y2="47"/>
+            <path d="M44 47 C44 53 47 55 50 55 C53 55 56 53 56 47"/>
+            <line x1="50" y1="55" x2="50" y2="67"/>
+          </g>
+        </svg>
+        <span class="tag">120px</span>
+      </div>
+      <div>
+        <svg width="192" height="192" viewBox="0 0 100 100">
+          <rect width="100" height="100" rx="22" fill="#0f1117"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#1a2340" stroke-width="8"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#4f8ef7" stroke-width="8"
+            stroke-dasharray="66 220" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#8b5cf6" stroke-width="8"
+            stroke-dasharray="88 220" stroke-dashoffset="-70" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#f472b6" stroke-width="8"
+            stroke-dasharray="44 220" stroke-dashoffset="-162" transform="rotate(-90 50 50)"/>
+          <g stroke="#ddeeff" stroke-width="2.8" stroke-linecap="round" fill="none">
+            <line x1="44" y1="36" x2="44" y2="47"/>
+            <line x1="50" y1="36" x2="50" y2="47"/>
+            <line x1="56" y1="36" x2="56" y2="47"/>
+            <path d="M44 47 C44 53 47 55 50 55 C53 55 56 53 56 47"/>
+            <line x1="50" y1="55" x2="50" y2="67"/>
+          </g>
+        </svg>
+        <span class="tag">192px</span>
+      </div>
     </div>
   </div>
 
-  <!-- C: Macro-coloured segmented ring + fork -->
+  <!-- Fork 3: 4 tines, flat crossbar instead of curve, bolder strokes -->
   <div class="option">
-    <div class="label">C — Macro Segments</div>
+    <div class="label">3 — Flat Crossbar</div>
     <div class="sizes">
-      <div><svg width="48" height="48" viewBox="0 0 100 100">
-        <rect width="100" height="100" rx="22" fill="#0f1117"/>
-        <circle cx="50" cy="50" r="35" fill="none" stroke="#1a2340" stroke-width="8"/>
-        <!-- protein segment (blue) -->
-        <circle cx="50" cy="50" r="35" fill="none" stroke="#4f8ef7" stroke-width="8"
-          stroke-dasharray="66 220" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
-        <!-- carbs segment (purple) -->
-        <circle cx="50" cy="50" r="35" fill="none" stroke="#8b5cf6" stroke-width="8"
-          stroke-dasharray="88 220" stroke-dashoffset="-70" transform="rotate(-90 50 50)"/>
-        <!-- fat segment (pink) -->
-        <circle cx="50" cy="50" r="35" fill="none" stroke="#f472b6" stroke-width="8"
-          stroke-dasharray="44 220" stroke-dashoffset="-162" transform="rotate(-90 50 50)"/>
-        <!-- fork -->
-        <g stroke="#e0eeff" stroke-width="2.8" stroke-linecap="round" fill="none">
-          <line x1="50" y1="65" x2="50" y2="48"/>
-          <path d="M44 37 L44 45 Q50 48 50 48 Q50 48 56 45 L56 37"/>
-          <line x1="47" y1="37" x2="47" y2="45"/>
-          <line x1="53" y1="37" x2="53" y2="45"/>
-        </g>
-      </svg><span class="tag">48px</span></div>
-      <div><svg width="144" height="144" viewBox="0 0 100 100">
-        <rect width="100" height="100" rx="22" fill="#0f1117"/>
-        <circle cx="50" cy="50" r="35" fill="none" stroke="#1a2340" stroke-width="8"/>
-        <circle cx="50" cy="50" r="35" fill="none" stroke="#4f8ef7" stroke-width="8"
-          stroke-dasharray="66 220" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
-        <circle cx="50" cy="50" r="35" fill="none" stroke="#8b5cf6" stroke-width="8"
-          stroke-dasharray="88 220" stroke-dashoffset="-70" transform="rotate(-90 50 50)"/>
-        <circle cx="50" cy="50" r="35" fill="none" stroke="#f472b6" stroke-width="8"
-          stroke-dasharray="44 220" stroke-dashoffset="-162" transform="rotate(-90 50 50)"/>
-        <g stroke="#e0eeff" stroke-width="2.8" stroke-linecap="round" fill="none">
-          <line x1="50" y1="65" x2="50" y2="48"/>
-          <path d="M44 37 L44 45 Q50 48 50 48 Q50 48 56 45 L56 37"/>
-          <line x1="47" y1="37" x2="47" y2="45"/>
-          <line x1="53" y1="37" x2="53" y2="45"/>
-        </g>
-      </svg><span class="tag">144px</span></div>
-    </div>
-  </div>
-
-  <!-- D: Double ring (outer thin, inner thick) + fork -->
-  <div class="option">
-    <div class="label">D — Double Ring</div>
-    <div class="sizes">
-      <div><svg width="48" height="48" viewBox="0 0 100 100"><defs>
-        <linearGradient id="rD1" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#4f8ef7"/>
-          <stop offset="100%" stop-color="#7eb8ff"/>
-        </linearGradient>
-      </defs>
-        <rect width="100" height="100" rx="22" fill="#0f1117"/>
-        <!-- outer thin decorative ring -->
-        <circle cx="50" cy="50" r="42" fill="none" stroke="#1e2d50" stroke-width="3"/>
-        <!-- inner main ring track -->
-        <circle cx="50" cy="50" r="33" fill="none" stroke="#162035" stroke-width="11"/>
-        <!-- inner main ring progress -->
-        <circle cx="50" cy="50" r="33" fill="none" stroke="url(#rD1)" stroke-width="11"
-          stroke-dasharray="155 207" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-        <!-- fork -->
-        <g stroke="#d0e8ff" stroke-width="2.8" stroke-linecap="round" fill="none">
-          <line x1="50" y1="64" x2="50" y2="48"/>
-          <path d="M45 38 L45 45 Q50 48 50 48 Q50 48 55 45 L55 38"/>
-          <line x1="47.5" y1="38" x2="47.5" y2="45"/>
-          <line x1="52.5" y1="38" x2="52.5" y2="45"/>
-        </g>
-      </svg><span class="tag">48px</span></div>
-      <div><svg width="144" height="144" viewBox="0 0 100 100"><defs>
-        <linearGradient id="rD2" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#4f8ef7"/>
-          <stop offset="100%" stop-color="#7eb8ff"/>
-        </linearGradient>
-      </defs>
-        <rect width="100" height="100" rx="22" fill="#0f1117"/>
-        <circle cx="50" cy="50" r="42" fill="none" stroke="#1e2d50" stroke-width="3"/>
-        <circle cx="50" cy="50" r="33" fill="none" stroke="#162035" stroke-width="11"/>
-        <circle cx="50" cy="50" r="33" fill="none" stroke="url(#rD2)" stroke-width="11"
-          stroke-dasharray="155 207" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-        <g stroke="#d0e8ff" stroke-width="2.8" stroke-linecap="round" fill="none">
-          <line x1="50" y1="64" x2="50" y2="48"/>
-          <path d="M45 38 L45 45 Q50 48 50 48 Q50 48 55 45 L55 38"/>
-          <line x1="47.5" y1="38" x2="47.5" y2="45"/>
-          <line x1="52.5" y1="38" x2="52.5" y2="45"/>
-        </g>
-      </svg><span class="tag">144px</span></div>
-    </div>
-  </div>
-
-  <!-- E: Ring with calorie number inside + fork top-right -->
-  <div class="option">
-    <div class="label">E — Ring + Kcal Label</div>
-    <div class="sizes">
-      <div><svg width="48" height="48" viewBox="0 0 100 100"><defs>
-        <linearGradient id="rE1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#7eb8ff"/>
-          <stop offset="100%" stop-color="#4f8ef7"/>
-        </linearGradient>
-      </defs>
-        <rect width="100" height="100" rx="22" fill="#0f1117"/>
-        <circle cx="50" cy="50" r="35" fill="none" stroke="#1a2340" stroke-width="8"/>
-        <circle cx="50" cy="50" r="35" fill="none" stroke="url(#rE1)" stroke-width="8"
-          stroke-dasharray="176 220" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-        <!-- fork small, offset up-left -->
-        <g stroke="#7eb8ff" stroke-width="2.5" stroke-linecap="round" fill="none" transform="translate(-8,-6) scale(0.82) translate(10,7)">
-          <line x1="50" y1="66" x2="50" y2="49"/>
-          <path d="M44 37 L44 46 Q50 49 50 49 Q50 49 56 46 L56 37"/>
-          <line x1="47" y1="37" x2="47" y2="46"/>
-          <line x1="53" y1="37" x2="53" y2="46"/>
-        </g>
-        <!-- kcal text -->
-        <text x="50" y="60" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#4f8ef7">kcal</text>
-      </svg><span class="tag">48px</span></div>
-      <div><svg width="144" height="144" viewBox="0 0 100 100"><defs>
-        <linearGradient id="rE2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#7eb8ff"/>
-          <stop offset="100%" stop-color="#4f8ef7"/>
-        </linearGradient>
-      </defs>
-        <rect width="100" height="100" rx="22" fill="#0f1117"/>
-        <circle cx="50" cy="50" r="35" fill="none" stroke="#1a2340" stroke-width="8"/>
-        <circle cx="50" cy="50" r="35" fill="none" stroke="url(#rE2)" stroke-width="8"
-          stroke-dasharray="176 220" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-        <g stroke="#7eb8ff" stroke-width="2.5" stroke-linecap="round" fill="none" transform="translate(-8,-6) scale(0.82) translate(10,7)">
-          <line x1="50" y1="66" x2="50" y2="49"/>
-          <path d="M44 37 L44 46 Q50 49 50 49 Q50 49 56 46 L56 37"/>
-          <line x1="47" y1="37" x2="47" y2="46"/>
-          <line x1="53" y1="37" x2="53" y2="46"/>
-        </g>
-        <text x="50" y="60" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#4f8ef7">kcal</text>
-      </svg><span class="tag">144px</span></div>
-    </div>
-  </div>
-
-  <!-- F: Arc (not full circle) + detailed fork + dot cap -->
-  <div class="option">
-    <div class="label">F — Open Arc</div>
-    <div class="sizes">
-      <div><svg width="48" height="48" viewBox="0 0 100 100"><defs>
-        <linearGradient id="rF1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#a8d4ff"/>
-          <stop offset="100%" stop-color="#3a6fd8"/>
-        </linearGradient>
-      </defs>
-        <rect width="100" height="100" rx="22" fill="#0f1117"/>
-        <!-- track arc (300 deg, 60 deg gap at bottom) -->
-        <!-- circumference = 2pi*36 ≈ 226 ; 300/360 * 226 = 188 -->
-        <circle cx="50" cy="50" r="36" fill="none" stroke="#162035" stroke-width="9"
-          stroke-dasharray="188 226" stroke-dashoffset="-19" transform="rotate(-90 50 50)"/>
-        <!-- progress arc (~75% of track = 141) -->
-        <circle cx="50" cy="50" r="36" fill="none" stroke="url(#rF1)" stroke-width="9"
-          stroke-dasharray="141 226" stroke-dashoffset="-19"
-          stroke-linecap="round" transform="rotate(-90 50 50)"/>
-        <!-- end dot -->
-        <circle cx="50" cy="14" r="4.5" fill="#3a6fd8" transform="rotate(131 50 50)"/>
-        <!-- fork -->
-        <g stroke="#c8e0ff" stroke-width="2.8" stroke-linecap="round" fill="none">
-          <line x1="50" y1="65" x2="50" y2="48"/>
-          <path d="M44 37 L44 45 Q50 48 50 48 Q50 48 56 45 L56 37"/>
-          <line x1="47" y1="37" x2="47" y2="45"/>
-          <line x1="53" y1="37" x2="53" y2="45"/>
-        </g>
-      </svg><span class="tag">48px</span></div>
-      <div><svg width="144" height="144" viewBox="0 0 100 100"><defs>
-        <linearGradient id="rF2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#a8d4ff"/>
-          <stop offset="100%" stop-color="#3a6fd8"/>
-        </linearGradient>
-      </defs>
-        <rect width="100" height="100" rx="22" fill="#0f1117"/>
-        <circle cx="50" cy="50" r="36" fill="none" stroke="#162035" stroke-width="9"
-          stroke-dasharray="188 226" stroke-dashoffset="-19" transform="rotate(-90 50 50)"/>
-        <circle cx="50" cy="50" r="36" fill="none" stroke="url(#rF2)" stroke-width="9"
-          stroke-dasharray="141 226" stroke-dashoffset="-19"
-          stroke-linecap="round" transform="rotate(-90 50 50)"/>
-        <circle cx="50" cy="14" r="4.5" fill="#3a6fd8" transform="rotate(131 50 50)"/>
-        <g stroke="#c8e0ff" stroke-width="2.8" stroke-linecap="round" fill="none">
-          <line x1="50" y1="65" x2="50" y2="48"/>
-          <path d="M44 37 L44 45 Q50 48 50 48 Q50 48 56 45 L56 37"/>
-          <line x1="47" y1="37" x2="47" y2="45"/>
-          <line x1="53" y1="37" x2="53" y2="45"/>
-        </g>
-      </svg><span class="tag">144px</span></div>
+      <div>
+        <svg width="48" height="48" viewBox="0 0 100 100">
+          <rect width="100" height="100" rx="22" fill="#0f1117"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#1a2340" stroke-width="8"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#4f8ef7" stroke-width="8"
+            stroke-dasharray="66 220" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#8b5cf6" stroke-width="8"
+            stroke-dasharray="88 220" stroke-dashoffset="-70" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#f472b6" stroke-width="8"
+            stroke-dasharray="44 220" stroke-dashoffset="-162" transform="rotate(-90 50 50)"/>
+          <g stroke="#ddeeff" stroke-linecap="round" fill="none">
+            <!-- tines -->
+            <line x1="43" y1="36" x2="43" y2="47" stroke-width="2.2"/>
+            <line x1="47.5" y1="36" x2="47.5" y2="47" stroke-width="2.2"/>
+            <line x1="52.5" y1="36" x2="52.5" y2="47" stroke-width="2.2"/>
+            <line x1="57" y1="36" x2="57" y2="47" stroke-width="2.2"/>
+            <!-- flat crossbar -->
+            <line x1="43" y1="47" x2="57" y2="47" stroke-width="2.2"/>
+            <!-- neck taper -->
+            <line x1="46" y1="47" x2="50" y2="53" stroke-width="2.2"/>
+            <line x1="54" y1="47" x2="50" y2="53" stroke-width="2.2"/>
+            <!-- handle -->
+            <line x1="50" y1="53" x2="50" y2="66" stroke-width="2.8"/>
+          </g>
+        </svg>
+        <span class="tag">48px</span>
+      </div>
+      <div>
+        <svg width="120" height="120" viewBox="0 0 100 100">
+          <rect width="100" height="100" rx="22" fill="#0f1117"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#1a2340" stroke-width="8"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#4f8ef7" stroke-width="8"
+            stroke-dasharray="66 220" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#8b5cf6" stroke-width="8"
+            stroke-dasharray="88 220" stroke-dashoffset="-70" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#f472b6" stroke-width="8"
+            stroke-dasharray="44 220" stroke-dashoffset="-162" transform="rotate(-90 50 50)"/>
+          <g stroke="#ddeeff" stroke-linecap="round" fill="none">
+            <line x1="43" y1="36" x2="43" y2="47" stroke-width="2.2"/>
+            <line x1="47.5" y1="36" x2="47.5" y2="47" stroke-width="2.2"/>
+            <line x1="52.5" y1="36" x2="52.5" y2="47" stroke-width="2.2"/>
+            <line x1="57" y1="36" x2="57" y2="47" stroke-width="2.2"/>
+            <line x1="43" y1="47" x2="57" y2="47" stroke-width="2.2"/>
+            <line x1="46" y1="47" x2="50" y2="53" stroke-width="2.2"/>
+            <line x1="54" y1="47" x2="50" y2="53" stroke-width="2.2"/>
+            <line x1="50" y1="53" x2="50" y2="66" stroke-width="2.8"/>
+          </g>
+        </svg>
+        <span class="tag">120px</span>
+      </div>
+      <div>
+        <svg width="192" height="192" viewBox="0 0 100 100">
+          <rect width="100" height="100" rx="22" fill="#0f1117"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#1a2340" stroke-width="8"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#4f8ef7" stroke-width="8"
+            stroke-dasharray="66 220" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#8b5cf6" stroke-width="8"
+            stroke-dasharray="88 220" stroke-dashoffset="-70" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="#f472b6" stroke-width="8"
+            stroke-dasharray="44 220" stroke-dashoffset="-162" transform="rotate(-90 50 50)"/>
+          <g stroke="#ddeeff" stroke-linecap="round" fill="none">
+            <line x1="43" y1="36" x2="43" y2="47" stroke-width="2.2"/>
+            <line x1="47.5" y1="36" x2="47.5" y2="47" stroke-width="2.2"/>
+            <line x1="52.5" y1="36" x2="52.5" y2="47" stroke-width="2.2"/>
+            <line x1="57" y1="36" x2="57" y2="47" stroke-width="2.2"/>
+            <line x1="43" y1="47" x2="57" y2="47" stroke-width="2.2"/>
+            <line x1="46" y1="47" x2="50" y2="53" stroke-width="2.2"/>
+            <line x1="54" y1="47" x2="50" y2="53" stroke-width="2.2"/>
+            <line x1="50" y1="53" x2="50" y2="66" stroke-width="2.8"/>
+          </g>
+        </svg>
+        <span class="tag">192px</span>
+      </div>
     </div>
   </div>
 
 </div>
-<p style="color:#444;font-size:.8rem;margin-top:8px">Reply with A–F to choose, or describe what you'd like tweaked.</p>
+<p style="color:#444;font-size:.8rem;margin-top:16px">Reply 1, 2, or 3 — or describe what you'd like changed.</p>
 </body>
 </html>
