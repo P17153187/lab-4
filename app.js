@@ -657,6 +657,266 @@ document.addEventListener('click', e => {
   renderAll();
 });
 
+/* ===== Navigation ===== */
+function switchView(navId) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-btn--active'));
+  document.getElementById(navId).classList.add('nav-btn--active');
+  document.getElementById('app').classList.toggle('hidden', navId !== 'nav-tracking');
+  document.getElementById('view-history').classList.toggle('hidden', navId !== 'nav-history');
+  document.getElementById('view-saved').classList.toggle('hidden', navId !== 'nav-saved');
+  if (navId === 'nav-history') initHistory();
+}
+document.getElementById('nav-tracking').addEventListener('click', () => switchView('nav-tracking'));
+document.getElementById('nav-history').addEventListener('click',  () => switchView('nav-history'));
+document.getElementById('nav-saved').addEventListener('click',    () => switchView('nav-saved'));
+
+/* ===== History ===== */
+let historyMode = 'week';
+let histData    = {};
+
+function getAllHistoryData() {
+  const data = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key || !key.startsWith('calorie-tracker-20')) continue;
+    const dateStr = key.replace('calorie-tracker-', '');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) continue;
+    try {
+      const parsed = JSON.parse(localStorage.getItem(key));
+      if (!parsed?.meals) continue;
+      let cals = 0, protein = 0, carbs = 0, fat = 0;
+      for (const items of Object.values(parsed.meals)) {
+        for (const item of (items || [])) {
+          cals    += item.calories || 0;
+          protein += item.protein  || 0;
+          carbs   += item.carbs    || 0;
+          fat     += item.fat      || 0;
+        }
+      }
+      if (cals > 0) data[dateStr] = { calories: cals, protein, carbs, fat };
+    } catch (_) {}
+  }
+  return data;
+}
+
+function weekStart(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const diff = d.getDay() === 0 ? -6 : 1 - d.getDay();
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().slice(0, 10);
+}
+
+function shiftDate(dateStr, n) {
+  const d = new Date(dateStr + 'T12:00:00');
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+function fmtShort(dateStr) {
+  return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+
+function buildRangeOptions(data, mode) {
+  const sel = document.getElementById('history-range-select');
+  sel.innerHTML = '';
+  const todayW = weekStart(TODAY);
+  const todayM = TODAY.slice(0, 7);
+
+  if (mode === 'week') {
+    const weeks = new Set([todayW]);
+    Object.keys(data).forEach(d => weeks.add(weekStart(d)));
+    [...weeks].sort().reverse().forEach(w => {
+      const opt = document.createElement('option');
+      opt.value = w;
+      const label = `${fmtShort(w)} – ${fmtShort(shiftDate(w, 6))}`;
+      opt.textContent = w === todayW ? `This week  (${label})` : label;
+      sel.appendChild(opt);
+    });
+  } else {
+    const months = new Set([todayM]);
+    Object.keys(data).forEach(d => months.add(d.slice(0, 7)));
+    [...months].sort().reverse().forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m;
+      const label = new Date(m + '-15').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+      opt.textContent = m === todayM ? `This month  (${label})` : label;
+      sel.appendChild(opt);
+    });
+  }
+}
+
+function getDays(data, mode, value) {
+  const days = [];
+  if (mode === 'week') {
+    for (let i = 0; i < 7; i++) {
+      const date = shiftDate(value, i);
+      days.push({ date, ...(data[date] || { calories: 0, protein: 0, carbs: 0, fat: 0 }) });
+    }
+  } else {
+    const [y, m] = value.split('-').map(Number);
+    const count = new Date(y, m, 0).getDate();
+    for (let d = 1; d <= count; d++) {
+      const date = `${value}-${String(d).padStart(2, '0')}`;
+      days.push({ date, ...(data[date] || { calories: 0, protein: 0, carbs: 0, fat: 0 }) });
+    }
+  }
+  return days;
+}
+
+function renderBarChart(days, goal, mode) {
+  const svg = document.getElementById('history-chart');
+  const W   = Math.max(300, svg.parentElement.clientWidth);
+  const LABEL_H = mode === 'week' ? 42 : 20;
+  const TOP_PAD = 28;
+  const H = 220;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('height', H);
+  svg.innerHTML = '';
+
+  const chartH = H - LABEL_H - TOP_PAD;
+  const n      = days.length;
+  const gap    = mode === 'week' ? 7 : 3;
+  const barW   = Math.max(2, (W - gap * (n + 1)) / n);
+  const maxV   = Math.max((goal || 2000) * 1.2, ...days.map(d => d.calories), 1);
+
+  const mk = (tag, attrs, text) => {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    if (text !== undefined) el.textContent = text;
+    return el;
+  };
+
+  // background
+  svg.appendChild(mk('rect', { width: W, height: H, fill: '#0b0d14' }));
+
+  // subtle grid lines at 25%, 50%, 75%, 100% of goal
+  if (goal) {
+    for (const frac of [0.25, 0.5, 0.75, 1]) {
+      const gy = TOP_PAD + chartH - (goal * frac / maxV) * chartH;
+      svg.appendChild(mk('line', { x1: 0, y1: gy, x2: W, y2: gy, stroke: '#1c2030', 'stroke-width': 1 }));
+    }
+    // goal line
+    const goalY = TOP_PAD + chartH - (goal / maxV) * chartH;
+    svg.appendChild(mk('line', { x1: 0, y1: goalY, x2: W, y2: goalY, stroke: '#4f8ef7', 'stroke-width': 1.5, 'stroke-dasharray': '5 4', opacity: 0.6 }));
+    svg.appendChild(mk('text', { x: W - 6, y: goalY - 5, 'text-anchor': 'end', fill: '#4f8ef7', 'font-size': 9, opacity: 0.7 }, `${goal} kcal`));
+  }
+
+  const DOW = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  days.forEach((day, i) => {
+    const x      = gap + i * (barW + gap);
+    const cals   = day.calories || 0;
+    const logged = cals > 0;
+    const isToday = day.date === TODAY;
+    const isFuture = day.date > TODAY;
+    const isOver  = goal && cals > goal;
+    const barH   = logged ? Math.max(4, (cals / maxV) * chartH) : 0;
+    const barY   = TOP_PAD + chartH - barH;
+    const bottomY = TOP_PAD + chartH;
+    const rx     = mode === 'week' ? 5 : 2;
+
+    // slot background
+    svg.appendChild(mk('rect', { x, y: TOP_PAD, width: barW, height: chartH, fill: '#131622', rx }));
+
+    // bar
+    if (logged) {
+      const fill = isOver ? '#ef4444' : (isToday ? '#5fa0ff' : '#4f8ef7');
+      svg.appendChild(mk('rect', { x, y: barY, width: barW, height: barH, fill, rx, opacity: isFuture ? 0.4 : 0.9 }));
+
+      // calorie label above bar (week only, don't crowd)
+      if (mode === 'week') {
+        const txt = cals >= 1000 ? (cals / 1000).toFixed(1) + 'k' : Math.round(cals);
+        svg.appendChild(mk('text', {
+          x: x + barW / 2, y: Math.max(TOP_PAD - 6, barY - 5),
+          'text-anchor': 'middle', fill: '#8ba8cc', 'font-size': 10
+        }, txt));
+      }
+    }
+
+    // today dot
+    if (isToday && mode === 'week') {
+      svg.appendChild(mk('circle', { cx: x + barW / 2, cy: bottomY + 30, r: 3, fill: '#4f8ef7' }));
+    }
+
+    // labels
+    if (mode === 'week') {
+      const d = new Date(day.date + 'T12:00:00');
+      const dow = DOW[d.getDay() === 0 ? 6 : d.getDay() - 1];
+      svg.appendChild(mk('text', {
+        x: x + barW / 2, y: bottomY + 16,
+        'text-anchor': 'middle', fill: isToday ? '#7eb8ff' : '#4a5268',
+        'font-size': 11, 'font-weight': isToday ? 'bold' : 'normal'
+      }, dow));
+      svg.appendChild(mk('text', {
+        x: x + barW / 2, y: bottomY + 30,
+        'text-anchor': 'middle', fill: isToday ? '#4f8ef7' : '#333a50', 'font-size': 9
+      }, day.date.slice(8)));
+    } else {
+      const dayNum = parseInt(day.date.slice(8));
+      if (dayNum === 1 || dayNum % 5 === 0 || isToday) {
+        svg.appendChild(mk('text', {
+          x: x + barW / 2, y: bottomY + 14,
+          'text-anchor': 'middle', fill: isToday ? '#7eb8ff' : '#3a4055', 'font-size': 8
+        }, dayNum));
+      }
+    }
+  });
+}
+
+function calcStats(days, goal) {
+  const logged = days.filter(d => d.calories > 0);
+  const n = logged.length;
+  if (!n) return { avg: 0, logged: 0, total: days.length, under: 0, streak: 0, protein: 0, carbs: 0, fat: 0 };
+
+  const avg     = Math.round(logged.reduce((s, d) => s + d.calories, 0) / n);
+  const under   = goal ? logged.filter(d => d.calories <= goal).length : null;
+  const protein = logged.reduce((s, d) => s + d.protein, 0) / n;
+  const carbs   = logged.reduce((s, d) => s + d.carbs,   0) / n;
+  const fat     = logged.reduce((s, d) => s + d.fat,     0) / n;
+
+  let streak = 0, best = 0;
+  for (const d of days) {
+    if (d.calories > 0) { best = Math.max(best, ++streak); } else streak = 0;
+  }
+
+  return { avg, logged: n, total: days.length, under, streak: best, protein, carbs, fat };
+}
+
+function renderHistoryStats(stats) {
+  document.getElementById('hs-avg').textContent    = stats.avg ? stats.avg.toLocaleString() + ' kcal' : '—';
+  document.getElementById('hs-logged').textContent = `${stats.logged} / ${stats.total} days`;
+  document.getElementById('hs-under').textContent  = stats.under != null ? `${stats.under} days` : '—';
+  document.getElementById('hs-streak').textContent = stats.streak ? `${stats.streak} day${stats.streak > 1 ? 's' : ''}` : '—';
+  document.getElementById('hs-protein').textContent = stats.protein ? stats.protein.toFixed(1) + 'g' : '—';
+  document.getElementById('hs-carbs').textContent   = stats.carbs   ? stats.carbs.toFixed(1)   + 'g' : '—';
+  document.getElementById('hs-fat').textContent     = stats.fat     ? stats.fat.toFixed(1)     + 'g' : '—';
+}
+
+function renderCurrentHistory() {
+  const val  = document.getElementById('history-range-select').value;
+  if (!val) return;
+  const days = getDays(histData, historyMode, val);
+  renderBarChart(days, state.goal, historyMode);
+  renderHistoryStats(calcStats(days, state.goal));
+}
+
+function initHistory() {
+  histData = getAllHistoryData();
+  buildRangeOptions(histData, historyMode);
+  renderCurrentHistory();
+}
+
+document.querySelectorAll('.period-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    historyMode = btn.dataset.period;
+    buildRangeOptions(histData, historyMode);
+    renderCurrentHistory();
+  });
+});
+document.getElementById('history-range-select').addEventListener('change', renderCurrentHistory);
+
 /* ===== Init ===== */
 loadState();
 renderAll();
