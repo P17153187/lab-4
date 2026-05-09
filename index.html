@@ -69,9 +69,10 @@
     <main class="meals">
       <div class="meal-card" id="meal-breakfast">
         <div class="meal-header">
-          <div>
+          <div class="meal-header-left">
             <span class="meal-icon">🍳</span>
             <span class="meal-title">Breakfast</span>
+            <button class="meal-remove-btn" data-hide-meal="breakfast" title="Hide">✕</button>
           </div>
           <div class="meal-header-right">
             <span class="meal-cals" id="cals-breakfast">0 kcal</span>
@@ -83,9 +84,10 @@
 
       <div class="meal-card" id="meal-lunch">
         <div class="meal-header">
-          <div>
+          <div class="meal-header-left">
             <span class="meal-icon">🥗</span>
             <span class="meal-title">Lunch</span>
+            <button class="meal-remove-btn" data-hide-meal="lunch" title="Hide">✕</button>
           </div>
           <div class="meal-header-right">
             <span class="meal-cals" id="cals-lunch">0 kcal</span>
@@ -97,9 +99,10 @@
 
       <div class="meal-card" id="meal-dinner">
         <div class="meal-header">
-          <div>
+          <div class="meal-header-left">
             <span class="meal-icon">🍽️</span>
             <span class="meal-title">Dinner</span>
+            <button class="meal-remove-btn" data-hide-meal="dinner" title="Hide">✕</button>
           </div>
           <div class="meal-header-right">
             <span class="meal-cals" id="cals-dinner">0 kcal</span>
@@ -111,9 +114,10 @@
 
       <div class="meal-card" id="meal-snacks">
         <div class="meal-header">
-          <div>
+          <div class="meal-header-left">
             <span class="meal-icon">🍫</span>
             <span class="meal-title">Snacks</span>
+            <button class="meal-remove-btn" data-hide-meal="snacks" title="Hide">✕</button>
           </div>
           <div class="meal-header-right">
             <span class="meal-cals" id="cals-snacks">0 kcal</span>
@@ -165,6 +169,10 @@
         <label class="field-label" for="input-goal">Calorie Limit (kcal)</label>
         <input id="input-goal" type="number" min="500" max="10000" placeholder="e.g. 2000" class="text-input" />
         <button id="btn-save-goal" class="primary-btn full-width">Save Goal</button>
+
+        <hr class="divider" />
+
+        <button id="btn-restore-meals" class="secondary-btn full-width">Restore Hidden Meals</button>
 
         <hr class="divider" />
 

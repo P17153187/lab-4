@@ -167,10 +167,31 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 14px 16px;
+  gap: 8px;
 }
-.meal-icon { margin-right: 8px; font-size: 1.1rem; }
+.meal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.meal-icon { font-size: 1.1rem; flex-shrink: 0; }
 .meal-title { font-weight: 600; font-size: 0.95rem; }
-.meal-header-right { display: flex; align-items: center; gap: 12px; }
+.meal-remove-btn {
+  background: none;
+  border: none;
+  color: var(--border);
+  font-size: 0.65rem;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.2s, background 0.2s;
+  padding: 0;
+}
+.meal-remove-btn:hover { color: var(--danger); background: rgba(239,68,68,0.12); }
+.meal-header-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .meal-cals { font-size: 0.8rem; color: var(--text-muted); }
 
 .add-btn {
@@ -448,18 +469,18 @@ header {
 }
 .add-meal-label { font-size: 0.88rem; font-weight: 600; }
 
-/* Custom meal delete button */
-.meal-delete-btn {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-right: 4px;
-  transition: color 0.2s, background 0.2s;
+.secondary-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 11px 20px;
+  transition: background 0.2s;
 }
-.meal-delete-btn:hover { color: var(--danger); background: rgba(239,68,68,0.1); }
+.secondary-btn:hover { background: var(--border); }
+.secondary-btn.full-width { width: 100%; }
 
 /* ===== Emoji grid ===== */
 .emoji-grid {

@@ -4,7 +4,8 @@ const TODAY = new Date().toISOString().slice(0, 10);
 let state = {
   goal: 2000,
   meals: { breakfast: [], lunch: [], dinner: [], snacks: [] },
-  customMeals: []   // [{ id, name, emoji }] — persisted separately (not per-day)
+  customMeals: [],    // [{ id, name, emoji }] — persisted separately (not per-day)
+  hiddenMeals: []     // built-in meal IDs hidden by the user
 };
 
 /* ===== Persistence ===== */
@@ -22,11 +23,12 @@ function loadState() {
     const cm = localStorage.getItem('calorie-tracker-custom-meals');
     if (cm) {
       state.customMeals = JSON.parse(cm);
-      // Ensure each custom meal has an entry in today's meals
       for (const m of state.customMeals) {
         if (!state.meals[m.id]) state.meals[m.id] = [];
       }
     }
+    const hm = localStorage.getItem('calorie-tracker-hidden-meals');
+    if (hm) state.hiddenMeals = JSON.parse(hm);
   } catch (_) {}
 }
 
@@ -34,6 +36,7 @@ function saveState() {
   localStorage.setItem('calorie-tracker-' + TODAY, JSON.stringify({ meals: state.meals }));
   localStorage.setItem('calorie-tracker-goal', String(state.goal));
   localStorage.setItem('calorie-tracker-custom-meals', JSON.stringify(state.customMeals));
+  localStorage.setItem('calorie-tracker-hidden-meals', JSON.stringify(state.hiddenMeals));
 }
 
 /* ===== Render ===== */
@@ -41,8 +44,20 @@ const RING_CIRCUMFERENCE = 2 * Math.PI * 50;
 
 function renderAll() {
   renderCustomMealCards();
-  const meals = ['breakfast', 'lunch', 'dinner', 'snacks',
-                 ...state.customMeals.map(m => m.id)];
+
+  // Show/hide built-in meal cards
+  const BUILTIN = ['breakfast', 'lunch', 'dinner', 'snacks'];
+  for (const id of BUILTIN) {
+    const card = document.getElementById('meal-' + id);
+    if (card) card.style.display = state.hiddenMeals.includes(id) ? 'none' : '';
+  }
+
+  // Show/hide the "Add Custom Meal" card (max 1 custom meal)
+  document.getElementById('add-custom-meal-btn').style.display =
+    state.customMeals.length >= 1 ? 'none' : '';
+
+  const visibleBuiltin = BUILTIN.filter(id => !state.hiddenMeals.includes(id));
+  const meals = [...visibleBuiltin, ...state.customMeals.map(m => m.id)];
   let totalCals = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0;
 
   for (const meal of meals) {
@@ -104,13 +119,13 @@ function buildCustomMealCard({ id, name, emoji }) {
   div.id = 'meal-' + id;
   div.innerHTML = `
     <div class="meal-header">
-      <div>
+      <div class="meal-header-left">
         <span class="meal-icon">${emoji}</span>
         <span class="meal-title">${escHtml(name)}</span>
+        <button class="meal-remove-btn" data-delete-meal="${id}" title="Remove meal">✕</button>
       </div>
       <div class="meal-header-right">
         <span class="meal-cals" id="cals-${id}">0 kcal</span>
-        <button class="meal-delete-btn" data-delete-meal="${id}" title="Remove meal">✕</button>
         <button class="add-btn" data-meal="${id}">+ Add</button>
       </div>
     </div>
@@ -171,6 +186,13 @@ document.getElementById('btn-save-goal').addEventListener('click', () => {
     closeModal('modal-settings');
   }
 });
+document.getElementById('btn-restore-meals').addEventListener('click', () => {
+  state.hiddenMeals = [];
+  saveState();
+  renderAll();
+  closeModal('modal-settings');
+});
+
 document.getElementById('btn-reset-day').addEventListener('click', () => {
   if (confirm('Reset all food entries for today?')) {
     state.meals = { breakfast: [], lunch: [], dinner: [], snacks: [] };
@@ -202,14 +224,24 @@ document.addEventListener('click', e => {
   openModal('modal-add');
 });
 
-/* ===== Delete Custom Meal ===== */
+/* ===== Hide built-in meal ===== */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-hide-meal]');
+  if (!btn) return;
+  const id = btn.dataset.hideMeal;
+  if (!state.hiddenMeals.includes(id)) state.hiddenMeals.push(id);
+  saveState();
+  renderAll();
+});
+
+/* ===== Delete custom meal ===== */
 document.addEventListener('click', e => {
   const btn = e.target.closest('[data-delete-meal]');
   if (!btn) return;
   const id = btn.dataset.deleteMeal;
   const meal = state.customMeals.find(m => m.id === id);
   if (!meal) return;
-  if (!confirm(`Remove "${meal.name}" and all its entries?`)) return;
+  if (!confirm(`Remove "${meal.name}"?`)) return;
   state.customMeals = state.customMeals.filter(m => m.id !== id);
   delete state.meals[id];
   saveState();
