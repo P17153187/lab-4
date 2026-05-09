@@ -69,9 +69,10 @@
     <main class="meals">
       <div class="meal-card" id="meal-breakfast">
         <div class="meal-header">
-          <div>
+          <div class="meal-header-left">
             <span class="meal-icon">🍳</span>
             <span class="meal-title">Breakfast</span>
+            <button class="meal-remove-btn" data-hide-meal="breakfast" title="Hide">✕</button>
           </div>
           <div class="meal-header-right">
             <span class="meal-cals" id="cals-breakfast">0 kcal</span>
@@ -83,9 +84,10 @@
 
       <div class="meal-card" id="meal-lunch">
         <div class="meal-header">
-          <div>
+          <div class="meal-header-left">
             <span class="meal-icon">🥗</span>
             <span class="meal-title">Lunch</span>
+            <button class="meal-remove-btn" data-hide-meal="lunch" title="Hide">✕</button>
           </div>
           <div class="meal-header-right">
             <span class="meal-cals" id="cals-lunch">0 kcal</span>
@@ -97,9 +99,10 @@
 
       <div class="meal-card" id="meal-dinner">
         <div class="meal-header">
-          <div>
+          <div class="meal-header-left">
             <span class="meal-icon">🍽️</span>
             <span class="meal-title">Dinner</span>
+            <button class="meal-remove-btn" data-hide-meal="dinner" title="Hide">✕</button>
           </div>
           <div class="meal-header-right">
             <span class="meal-cals" id="cals-dinner">0 kcal</span>
@@ -111,9 +114,10 @@
 
       <div class="meal-card" id="meal-snacks">
         <div class="meal-header">
-          <div>
+          <div class="meal-header-left">
             <span class="meal-icon">🍫</span>
             <span class="meal-title">Snacks</span>
+            <button class="meal-remove-btn" data-hide-meal="snacks" title="Hide">✕</button>
           </div>
           <div class="meal-header-right">
             <span class="meal-cals" id="cals-snacks">0 kcal</span>
@@ -165,6 +169,10 @@
         <label class="field-label" for="input-goal">Calorie Limit (kcal)</label>
         <input id="input-goal" type="number" min="500" max="10000" placeholder="e.g. 2000" class="text-input" />
         <button id="btn-save-goal" class="primary-btn full-width">Save Goal</button>
+
+        <hr class="divider" />
+
+        <button id="btn-restore-meals" class="secondary-btn full-width">Restore Hidden Meals</button>
 
         <hr class="divider" />
 
@@ -259,6 +267,87 @@
         <button id="btn-create-meal" class="primary-btn full-width" style="margin-top:16px">Create Meal</button>
       </div>
     </div>
+  </div>
+
+  <!-- ===== ONBOARDING ===== -->
+  <div id="onboarding" class="ob-overlay hidden">
+
+    <!-- Step indicators -->
+    <div class="ob-dots">
+      <span class="ob-dot ob-dot--active" data-step="0"></span>
+      <span class="ob-dot" data-step="1"></span>
+    </div>
+
+    <!-- Step 1: Welcome -->
+    <div class="ob-step active" id="ob-step-0">
+      <div class="ob-icon-wrap">
+        <img src="icon.svg" class="ob-icon" alt="" />
+      </div>
+      <h1 class="ob-title">Calorie Tracker</h1>
+      <p class="ob-subtitle">Your simple, powerful daily food diary</p>
+
+      <ul class="ob-features">
+        <li class="ob-feature">
+          <span class="ob-feat-icon">🔍</span>
+          <div class="ob-feat-text">
+            <strong>Search millions of foods</strong>
+            <span>Or scan a barcode to log instantly</span>
+          </div>
+        </li>
+        <li class="ob-feature">
+          <span class="ob-feat-icon">🍽️</span>
+          <div class="ob-feat-text">
+            <strong>Organised by meal</strong>
+            <span>Breakfast, lunch, dinner, snacks &amp; more</span>
+          </div>
+        </li>
+        <li class="ob-feature">
+          <span class="ob-feat-icon">📊</span>
+          <div class="ob-feat-text">
+            <strong>Calories &amp; macros</strong>
+            <span>Protein, carbs and fat tracked daily</span>
+          </div>
+        </li>
+      </ul>
+
+      <button class="primary-btn full-width" id="ob-next">Get Started →</button>
+    </div>
+
+    <!-- Step 2: Set Goal -->
+    <div class="ob-step" id="ob-step-1">
+      <h2 class="ob-title ob-title--sm">Set your daily calorie goal</h2>
+      <p class="ob-subtitle">You can change this any time in settings</p>
+
+      <div class="ob-reference">
+        <div class="ob-ref-row">
+          <span>Maintain weight</span>
+          <span class="ob-ref-val">2,000 – 2,500 kcal</span>
+        </div>
+        <div class="ob-ref-row">
+          <span>Moderate deficit</span>
+          <span class="ob-ref-val">1,500 – 2,000 kcal</span>
+        </div>
+        <div class="ob-ref-row">
+          <span>Aggressive deficit</span>
+          <span class="ob-ref-val">1,200 – 1,500 kcal</span>
+        </div>
+      </div>
+
+      <div class="ob-input-row">
+        <input id="ob-goal-input" type="number" inputmode="numeric"
+               min="500" max="9999" placeholder="e.g. 2000"
+               class="text-input ob-goal-input" />
+        <span class="ob-kcal-unit">kcal / day</span>
+      </div>
+
+      <div id="ob-warning" class="ob-warning hidden"></div>
+
+      <button class="primary-btn full-width" id="ob-finish" style="margin-top:20px">
+        Start Tracking
+      </button>
+      <button class="ob-back-btn" id="ob-back">← Back</button>
+    </div>
+
   </div>
 
   <script src="app.js"></script>
