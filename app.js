@@ -1,5 +1,6 @@
 /* ===== State ===== */
 const TODAY = new Date().toISOString().slice(0, 10);
+const OB_KEY = 'calorie-tracker-onboarded';
 
 let state = {
   goal: 2000,
@@ -662,8 +663,6 @@ renderAll();
 initOnboarding();
 
 /* ===== Onboarding ===== */
-const OB_KEY = 'calorie-tracker-onboarded';
-
 function initOnboarding() {
   if (localStorage.getItem(OB_KEY) && state.goal) return;
   document.getElementById('onboarding').classList.remove('hidden');
