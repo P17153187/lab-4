@@ -640,3 +640,73 @@ document.addEventListener('click', e => {
 /* ===== Init ===== */
 loadState();
 renderAll();
+initOnboarding();
+
+/* ===== Onboarding ===== */
+const OB_KEY = 'calorie-tracker-onboarded';
+
+function initOnboarding() {
+  if (localStorage.getItem(OB_KEY)) return;
+  document.getElementById('onboarding').classList.remove('hidden');
+}
+
+// Step navigation
+document.getElementById('ob-next').addEventListener('click', () => setObStep(1));
+document.getElementById('ob-back').addEventListener('click', () => setObStep(0));
+
+function setObStep(n) {
+  document.querySelectorAll('.ob-step').forEach((el, i) =>
+    el.classList.toggle('active', i === n));
+  document.querySelectorAll('.ob-dot').forEach((el, i) =>
+    el.classList.toggle('ob-dot--active', i === n));
+  if (n === 1) document.getElementById('ob-goal-input').focus();
+}
+
+// Live health warning
+const OB_CAUTION_THRESHOLD = 1500; // amber
+const OB_DANGER_THRESHOLD  = 1200; // red
+
+document.getElementById('ob-goal-input').addEventListener('input', updateObWarning);
+
+function updateObWarning() {
+  const val    = parseInt(document.getElementById('ob-goal-input').value, 10);
+  const warnEl = document.getElementById('ob-warning');
+
+  if (!val || val >= OB_CAUTION_THRESHOLD) {
+    warnEl.className = 'ob-warning hidden';
+    warnEl.innerHTML = '';
+    return;
+  }
+
+  if (val < OB_DANGER_THRESHOLD) {
+    warnEl.className = 'ob-warning ob-warning--danger';
+    warnEl.innerHTML = `
+      <strong>⚕️ Very low calorie goal</strong><br>
+      ${val < 800
+        ? 'A goal below 800 kcal is classified as a <strong>Very Low Calorie Diet (VLCD)</strong> and carries serious health risks including muscle loss, nutritional deficiencies and metabolic changes. This level should <strong>only be followed under direct medical supervision</strong>.'
+        : 'A goal below 1,200 kcal/day is below the recommended minimum for most adults (1,200 kcal for women, 1,500 kcal for men). Sustained restriction at this level can lead to nutritional deficiencies and other health complications.'
+      }
+      <br><br>Please speak to your <strong>doctor or a registered dietitian</strong> before committing to a calorie goal this low.`;
+  } else {
+    warnEl.className = 'ob-warning ob-warning--caution';
+    warnEl.innerHTML = `
+      <strong>⚠️ Below recommended minimum</strong><br>
+      Most health guidelines recommend a minimum of <strong>1,200 kcal/day for women</strong> and <strong>1,500 kcal/day for men</strong>. Consider whether a slightly higher goal might be more sustainable. If you are unsure, please consult your doctor or a dietitian.`;
+  }
+}
+
+// Finish onboarding
+document.getElementById('ob-finish').addEventListener('click', () => {
+  const val = parseInt(document.getElementById('ob-goal-input').value, 10);
+  if (!val || val < 500 || val > 9999) {
+    document.getElementById('ob-goal-input').focus();
+    document.getElementById('ob-goal-input').style.borderColor = 'var(--danger)';
+    setTimeout(() => document.getElementById('ob-goal-input').style.borderColor = '', 1500);
+    return;
+  }
+  state.goal = val;
+  saveState();
+  localStorage.setItem(OB_KEY, '1');
+  document.getElementById('onboarding').classList.add('hidden');
+  renderAll();
+});
