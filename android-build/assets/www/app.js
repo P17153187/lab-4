@@ -172,6 +172,24 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
 });
 
+/* ===== Custom Confirm Dialog ===== */
+let _confirmCallback = null;
+
+document.getElementById('confirm-ok').addEventListener('click', () => {
+  closeModal('modal-confirm');
+  if (_confirmCallback) { _confirmCallback(); _confirmCallback = null; }
+});
+document.getElementById('confirm-cancel').addEventListener('click', () => {
+  closeModal('modal-confirm');
+  _confirmCallback = null;
+});
+
+function showConfirm(message, onConfirm) {
+  document.getElementById('confirm-message').textContent = message;
+  _confirmCallback = onConfirm;
+  openModal('modal-confirm');
+}
+
 /* ===== Settings ===== */
 document.getElementById('btn-settings').addEventListener('click', () => {
   document.getElementById('input-goal').value = state.goal || '';
@@ -194,13 +212,13 @@ document.getElementById('btn-restore-meals').addEventListener('click', () => {
 });
 
 document.getElementById('btn-reset-day').addEventListener('click', () => {
-  if (confirm('Reset all food entries for today?')) {
+  showConfirm('Reset all food entries for today?', () => {
     state.meals = { breakfast: [], lunch: [], dinner: [], snacks: [] };
     for (const m of state.customMeals) state.meals[m.id] = [];
     saveState();
     renderAll();
     closeModal('modal-settings');
-  }
+  });
 });
 
 /* ===== Add Food Modal ===== */
@@ -241,11 +259,12 @@ document.addEventListener('click', e => {
   const id = btn.dataset.deleteMeal;
   const meal = state.customMeals.find(m => m.id === id);
   if (!meal) return;
-  if (!confirm(`Remove "${meal.name}"?`)) return;
-  state.customMeals = state.customMeals.filter(m => m.id !== id);
-  delete state.meals[id];
-  saveState();
-  renderAll();
+  showConfirm(`Remove "${meal.name}"?`, () => {
+    state.customMeals = state.customMeals.filter(m => m.id !== id);
+    delete state.meals[id];
+    saveState();
+    renderAll();
+  });
 });
 
 /* ===== Custom Meal Creation ===== */
@@ -646,7 +665,7 @@ initOnboarding();
 const OB_KEY = 'calorie-tracker-onboarded';
 
 function initOnboarding() {
-  if (localStorage.getItem(OB_KEY)) return;
+  if (localStorage.getItem(OB_KEY) && state.goal) return;
   document.getElementById('onboarding').classList.remove('hidden');
 }
 
