@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="108" fill="#1a1d27"/>
+  <!-- Flame (calories) -->
+  <path fill="#4f8ef7" d="M256 100
+    C 282 138 316 162 320 210
+    C 324 252 304 282 286 296
+    C 298 268 292 244 276 236
+    C 286 262 278 294 256 310
+    C 234 294 226 262 236 236
+    C 220 244 214 268 226 296
+    C 208 282 188 252 192 210
+    C 196 162 230 138 256 100 Z"/>
+  <!-- Inner glow -->
+  <path fill="#7eb8ff" opacity="0.55" d="M256 200
+    C 268 222 274 245 266 266
+    C 259 281 249 282 246 272
+    C 252 258 250 236 256 200 Z"/>
+  <!-- Plate arc at bottom -->
+  <path fill="none" stroke="#4f8ef7" stroke-width="20" stroke-linecap="round"
+        d="M 170 370 A 90 90 0 0 0 342 370"/>
+  <line x1="170" y1="370" x2="342" y2="370" stroke="#4f8ef7" stroke-width="20" stroke-linecap="round"/>
+</svg>

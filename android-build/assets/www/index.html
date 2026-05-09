@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Calorie Tracker</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#4f8ef7" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <!-- iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Calories" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header>
+      <div class="header-inner">
+        <h1>Calorie Tracker</h1>
+        <button id="btn-settings" class="icon-btn" title="Settings" aria-label="Settings">&#9881;</button>
+      </div>
+    </header>
+
+    <!-- Daily Summary -->
+    <section class="daily-summary">
+      <div class="summary-row">
+        <div class="summary-stat">
+          <span class="stat-value" id="stat-consumed">0</span>
+          <span class="stat-label">Consumed</span>
+        </div>
+        <div class="ring-wrap">
+          <svg viewBox="0 0 120 120" class="ring-svg">
+            <circle class="ring-bg" cx="60" cy="60" r="50" />
+            <circle class="ring-fg" id="ring-fg" cx="60" cy="60" r="50" />
+          </svg>
+          <div class="ring-center">
+            <span id="ring-remaining">—</span>
+            <span class="ring-label">left</span>
+          </div>
+        </div>
+        <div class="summary-stat">
+          <span class="stat-value" id="stat-goal">—</span>
+          <span class="stat-label">Goal</span>
+        </div>
+      </div>
+      <div class="macro-bar-row">
+        <div class="macro-pill protein">
+          <span class="macro-label">Protein</span>
+          <span class="macro-val" id="mac-protein">0g</span>
+        </div>
+        <div class="macro-pill carbs">
+          <span class="macro-label">Carbs</span>
+          <span class="macro-val" id="mac-carbs">0g</span>
+        </div>
+        <div class="macro-pill fat">
+          <span class="macro-label">Fat</span>
+          <span class="macro-val" id="mac-fat">0g</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Meal Sections -->
+    <main class="meals">
+      <div class="meal-card" id="meal-breakfast">
+        <div class="meal-header">
+          <div>
+            <span class="meal-icon">☀️</span>
+            <span class="meal-title">Breakfast</span>
+          </div>
+          <div class="meal-header-right">
+            <span class="meal-cals" id="cals-breakfast">0 kcal</span>
+            <button class="add-btn" data-meal="breakfast">+ Add</button>
+          </div>
+        </div>
+        <ul class="food-list" id="list-breakfast"></ul>
+      </div>
+
+      <div class="meal-card" id="meal-lunch">
+        <div class="meal-header">
+          <div>
+            <span class="meal-icon">🌤️</span>
+            <span class="meal-title">Lunch</span>
+          </div>
+          <div class="meal-header-right">
+            <span class="meal-cals" id="cals-lunch">0 kcal</span>
+            <button class="add-btn" data-meal="lunch">+ Add</button>
+          </div>
+        </div>
+        <ul class="food-list" id="list-lunch"></ul>
+      </div>
+
+      <div class="meal-card" id="meal-dinner">
+        <div class="meal-header">
+          <div>
+            <span class="meal-icon">🌙</span>
+            <span class="meal-title">Dinner</span>
+          </div>
+          <div class="meal-header-right">
+            <span class="meal-cals" id="cals-dinner">0 kcal</span>
+            <button class="add-btn" data-meal="dinner">+ Add</button>
+          </div>
+        </div>
+        <ul class="food-list" id="list-dinner"></ul>
+      </div>
+
+      <div class="meal-card" id="meal-snacks">
+        <div class="meal-header">
+          <div>
+            <span class="meal-icon">🍎</span>
+            <span class="meal-title">Snacks</span>
+          </div>
+          <div class="meal-header-right">
+            <span class="meal-cals" id="cals-snacks">0 kcal</span>
+            <button class="add-btn" data-meal="snacks">+ Add</button>
+          </div>
+        </div>
+        <ul class="food-list" id="list-snacks"></ul>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== MODALS ===== -->
+
+  <!-- Settings Modal -->
+  <div id="modal-settings" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Daily Goal</h2>
+        <button class="close-btn" data-close="modal-settings">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label class="field-label" for="input-goal">Calorie Limit (kcal)</label>
+        <input id="input-goal" type="number" min="500" max="10000" placeholder="e.g. 2000" class="text-input" />
+        <button id="btn-save-goal" class="primary-btn full-width">Save Goal</button>
+
+        <hr class="divider" />
+
+        <button id="btn-reset-day" class="danger-btn full-width">Reset Today's Log</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Food Modal -->
+  <div id="modal-add" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-add-title">Add to Breakfast</h2>
+        <button class="close-btn" data-close="modal-add">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Tabs -->
+        <div class="tab-row">
+          <button class="tab-btn active" data-tab="search">Search</button>
+          <button class="tab-btn" data-tab="barcode">Barcode</button>
+          <button class="tab-btn" data-tab="manual">Manual</button>
+        </div>
+
+        <!-- Search Tab -->
+        <div class="tab-panel active" id="tab-search">
+          <div class="search-row">
+            <input id="food-search-input" type="text" placeholder="Search food…" class="text-input" />
+            <button id="btn-search" class="primary-btn">Search</button>
+          </div>
+          <div id="search-results" class="results-list"></div>
+        </div>
+
+        <!-- Barcode Tab -->
+        <div class="tab-panel hidden" id="tab-barcode">
+          <p class="hint">Point your camera at a product barcode.</p>
+          <div id="scanner-container"></div>
+          <div id="barcode-result" class="barcode-result hidden"></div>
+        </div>
+
+        <!-- Manual Tab -->
+        <div class="tab-panel hidden" id="tab-manual">
+          <label class="field-label">Food Name</label>
+          <input id="manual-name" type="text" placeholder="e.g. Chicken breast" class="text-input" />
+          <label class="field-label">Calories (kcal)</label>
+          <input id="manual-calories" type="number" min="0" placeholder="e.g. 165" class="text-input" />
+          <label class="field-label">Protein (g)</label>
+          <input id="manual-protein" type="number" min="0" placeholder="0" class="text-input" />
+          <label class="field-label">Carbs (g)</label>
+          <input id="manual-carbs" type="number" min="0" placeholder="0" class="text-input" />
+          <label class="field-label">Fat (g)</label>
+          <input id="manual-fat" type="number" min="0" placeholder="0" class="text-input" />
+          <button id="btn-add-manual" class="primary-btn full-width" style="margin-top:12px">Add Food</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quantity Modal -->
+  <div id="modal-qty" class="modal-overlay hidden">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h2 id="qty-food-name">Food</h2>
+        <button class="close-btn" data-close="modal-qty">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="qty-info" id="qty-info"></div>
+        <label class="field-label">Servings</label>
+        <input id="qty-servings" type="number" min="0.25" step="0.25" value="1" class="text-input" />
+        <button id="btn-confirm-add" class="primary-btn full-width" style="margin-top:12px">Add to Meal</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
